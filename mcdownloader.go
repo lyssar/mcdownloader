@@ -1,8 +1,8 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/lyssar/mcdownloader/config"
 	"github.com/lyssar/mcdownloader/server"
 	"os"
 )
@@ -10,22 +10,23 @@ import (
 func main() {
 	subcommand := ""
 
-	modpackFlags := flag.NewFlagSet("modpack", flag.ExitOnError)
-	packageId := modpackFlags.String("packageId", "", "packageId")
-	packageVersion := modpackFlags.String("version", "", "version")
-
 	if len(os.Args) > 1 {
 		subcommand = os.Args[1]
 	}
 
+	config.LoadArgs(subcommand)
+
 	switch subcommand {
 	case "server":
+		fmt.Println("    McVersion: ", *config.McVersion)
+		fmt.Println("    ServerType: ", *config.ServerType)
+		fmt.Println("    ServerVersion: ", *config.ServerVersion)
 		server.InstalServer()
 	case "modpack":
-		modpackFlags.Parse(os.Args[2:])
+		config.LoadArgs("server")
 		fmt.Println("Start Installing MC Modpack to Server")
-		fmt.Println("    package: ", *packageId)
-		fmt.Println("    version: ", *packageVersion)
+		fmt.Println("    package: ", *config.PackageId)
+		fmt.Println("    version: ", *config.PackageVersion)
 	default:
 		fmt.Println("HELP")
 	}

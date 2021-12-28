@@ -25,11 +25,21 @@ type MinecraftVersion struct {
 }
 
 func DownloadInstaller() (MinecraftVersion, ForgeVersion) {
-	minecraftVersion := selectMinecraftVersion()
+	var minecraftVersion MinecraftVersion
+	var forgeVersion ForgeVersion
+	if *config.McVersion == "" {
+		minecraftVersion = selectMinecraftVersion()
+	} else {
+		minecraftVersion = MinecraftVersion{Version: *config.McVersion, Page: "index_" + *config.McVersion + ".html"}
+	}
 
 	fmt.Printf("MC Version: %s\n", minecraftVersion.Version)
 
-	forgeVersion := selectForgeVersion(minecraftVersion)
+	if *config.ServerVersion == "" {
+		forgeVersion = selectForgeVersion(minecraftVersion)
+	} else {
+		forgeVersion = ForgeVersion{Version: *config.ServerVersion, Installer: getMavenDownloadLink(minecraftVersion.Version, *config.ServerVersion)}
+	}
 
 	fmt.Printf("Forge Version: %s\n", forgeVersion.Version)
 
@@ -129,9 +139,8 @@ func selectForgeVersion(minecraftVersion MinecraftVersion) ForgeVersion {
 }
 
 func getMinecraftVersionList() []MinecraftVersion {
-
 	versionListItems := []MinecraftVersion{}
-
+	fmt.Println("Loading minecraft version list.")
 	doc, err := htmlquery.LoadURL("https://files.minecraftforge.net/net/minecraftforge/forge/")
 	if err != nil {
 		log.Fatal(err)
@@ -158,6 +167,8 @@ func getMinecraftVersionList() []MinecraftVersion {
 func getForgeVersionForMinecraftVersion(mcVersion MinecraftVersion) []ForgeVersion {
 	versionList := []ForgeVersion{}
 
+	fmt.Printf("Loading forge version list for minecraft %s.\n", mcVersion.Version)
+
 	doc, err := htmlquery.LoadURL("https://files.minecraftforge.net/net/minecraftforge/forge/" + mcVersion.Page)
 	if err != nil {
 		log.Fatal(err)
@@ -166,7 +177,7 @@ func getForgeVersionForMinecraftVersion(mcVersion MinecraftVersion) []ForgeVersi
 	links := htmlquery.Find(doc, "//table[contains(@class, 'download-list')]/tbody/tr/td[contains(@class, 'download-version')]")
 	for _, n := range links {
 		forgeVersion := strings.Trim(htmlquery.InnerText(n), " \n")
-		installer := fmt.Sprintf("https://maven.minecraftforge.net/net/minecraftforge/forge/%[1]s-%[2]s/forge-%[1]s-%[2]s-installer.jar", mcVersion.Version, forgeVersion)
+		installer := getMavenDownloadLink(mcVersion.Version, forgeVersion)
 
 		forgetVersion := ForgeVersion{Version: forgeVersion, Installer: installer}
 
@@ -207,4 +218,8 @@ func getCwd() string {
 		log.Fatal(err)
 	}
 	return dir
+}
+
+func getMavenDownloadLink(mcVersion string, forgeVersion string) string {
+	return fmt.Sprintf("https://maven.minecraftforge.net/net/minecraftforge/forge/%[1]s-%[2]s/forge-%[1]s-%[2]s-installer.jar", mcVersion, forgeVersion)
 }
