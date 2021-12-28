@@ -4,6 +4,7 @@
 
 ### Project files ###
 mcdownloader
+dist/
 
 ### Go ###
 # Binaries for programs and plugins
@@ -42,4 +43,3 @@ mcdownloader
 .nfs*
 
 # End of https://www.toptal.com/developers/gitignore/api/Go,linux
-

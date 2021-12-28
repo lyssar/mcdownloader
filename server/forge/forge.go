@@ -1,11 +1,13 @@
-package server
+package forge
 
 import (
 	"fmt"
+	"github.com/lyssar/mcdownloader/config"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/antchfx/htmlquery"
@@ -22,9 +24,7 @@ type MinecraftVersion struct {
 	Page    string
 }
 
-func Forge() {
-	fmt.Println("Start Installing MC Server")
-
+func DownloadInstaller() (MinecraftVersion, ForgeVersion) {
 	minecraftVersion := selectMinecraftVersion()
 
 	fmt.Printf("MC Version: %s\n", minecraftVersion.Version)
@@ -34,6 +34,48 @@ func Forge() {
 	fmt.Printf("Forge Version: %s\n", forgeVersion.Version)
 
 	downloadForge(forgeVersion)
+
+	eulaFile := []byte("forge-" + minecraftVersion.Version + "-" + forgeVersion.Version)
+	err := os.WriteFile("version.txt", eulaFile, 0644)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return minecraftVersion, forgeVersion
+}
+
+func InstalServer(minecraftVerion MinecraftVersion, forgeVersion ForgeVersion) {
+	eulaFile := []byte("eula=true")
+	err := os.WriteFile("eula.txt", eulaFile, 0644)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out, cmdErr := exec.Command("/usr/bin/java", "-jar", getCwd()+"/"+config.InstallerFile, "--installServer").Output()
+
+	if cmdErr != nil {
+		log.Fatal(cmdErr)
+	}
+	fmt.Println(string(out))
+
+	renamErr := os.Rename("forge-"+minecraftVerion.Version+"-"+forgeVersion.Version+".jar", config.ServerFile)
+	if renamErr != nil {
+		log.Fatal(renamErr)
+	}
+
+	err = os.Remove(config.InstallerFile)
+	if err != nil {
+		return
+	}
+
+	err = os.Remove(config.InstallerFile + ".log")
+	if err != nil {
+		return
+	}
+
+	fmt.Println("Forge installed. Please configure your server.properties file before starting")
 }
 
 func selectMinecraftVersion() MinecraftVersion {
@@ -134,18 +176,19 @@ func getForgeVersionForMinecraftVersion(mcVersion MinecraftVersion) []ForgeVersi
 	return versionList
 }
 
-func downloadForge(forgeVersion ForgeVersion) error {
+func downloadForge(forgeVersion ForgeVersion) {
 	fmt.Println("Downloading forge version: ", forgeVersion.Version)
 
 	// Get the data
 	resp, err := http.Get(forgeVersion.Installer)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
 	// Create the file
-	out, err := os.Create(getCwd() + "/forger_installer.jar")
+	fmt.Println("Loading", config.InstallerFile)
+	out, err := os.Create(getCwd() + "/" + config.InstallerFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -153,7 +196,9 @@ func downloadForge(forgeVersion ForgeVersion) error {
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return err
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getCwd() string {
