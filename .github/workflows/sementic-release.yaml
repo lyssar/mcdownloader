@@ -23,8 +23,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: binary-folder
-          path: |
-            dist
+          path: ./dist/
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
