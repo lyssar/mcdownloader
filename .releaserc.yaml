@@ -67,6 +67,3 @@ publish:
 
 success:
   - "@semantic-release/github"
-
-fail:
-  - "@semantic-release/github"
