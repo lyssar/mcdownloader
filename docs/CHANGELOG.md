@@ -1,3 +1,10 @@
+### [1.0.3](https://github.com/lyssar/mcdownloader/compare/1.0.2...1.0.3) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* changed on condition of release upload ([b659fc2](https://github.com/lyssar/mcdownloader/commit/b659fc2d4a0706e1be0e9c66ca9def30ae5a3d05))
+
 ### [1.0.2](https://github.com/lyssar/mcdownloader/compare/1.0.1...1.0.2) (2022-01-18)
 
 
