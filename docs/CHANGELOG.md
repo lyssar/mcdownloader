@@ -1,3 +1,11 @@
+### [1.0.5](https://github.com/lyssar/mcdownloader/compare/1.0.4...1.0.5) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* added missing needs to have a clear dependency chain ([abe5e87](https://github.com/lyssar/mcdownloader/commit/abe5e87368cc2355fb403bae8d1468544cb62bcf))
+* merge release and build together ([f256216](https://github.com/lyssar/mcdownloader/commit/f256216dfd5f8251a06f0936f176e1b43acdcc76))
+
 ### [1.0.4](https://github.com/lyssar/mcdownloader/compare/1.0.3...1.0.4) (2022-01-18)
 
 
