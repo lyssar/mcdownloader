@@ -1,3 +1,10 @@
+### [1.0.6](https://github.com/lyssar/mcdownloader/compare/1.0.5...1.0.6) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* moved release definition to publish section ([1040c61](https://github.com/lyssar/mcdownloader/commit/1040c615832f91861d894c049e7e4313174491c0))
+
 ### [1.0.5](https://github.com/lyssar/mcdownloader/compare/1.0.4...1.0.5) (2022-01-18)
 
 
