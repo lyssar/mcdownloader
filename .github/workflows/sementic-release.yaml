@@ -18,16 +18,12 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: '1.16'
-      - uses: wangyoucao577/go-release-action@v1.22
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: linux
-          goarch: amd64
+      - run: go build -o ./dist/mcdownloader mcdownloader.go
       - name: Archive downloader artifacts
         uses: actions/upload-artifact@v2
         with:
           name: binary-folder
-          path: ./mcdownloader
+          path: ./dist
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
