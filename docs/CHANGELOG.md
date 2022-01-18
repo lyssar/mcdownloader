@@ -1,3 +1,10 @@
+### [1.0.4](https://github.com/lyssar/mcdownloader/compare/1.0.3...1.0.4) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* added own deployer key to repo and use it for check outs ([b50d890](https://github.com/lyssar/mcdownloader/commit/b50d8901c0faaf6b930cd9a5b520d83219e2792c))
+
 ### [1.0.3](https://github.com/lyssar/mcdownloader/compare/1.0.2...1.0.3) (2022-01-18)
 
 
