@@ -1,5 +1,8 @@
 ---
-branches: ['main']
+branches:
+  -
+    name: main
+    prerelease: false
 preset: "conventionalcommits"
 tagFormat: "${version}"
 plugins:
