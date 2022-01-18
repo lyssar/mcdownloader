@@ -1,5 +1,5 @@
 ---
-branch: main
+branch: ['main']
 preset: "conventionalcommits"
 tagFormat: "${version}"
 plugins:
@@ -9,53 +9,97 @@ plugins:
   - "@semantic-release/git"
   - "@semantic-release/github"
 
+verifyConditions:
+  - '@semantic-release/changelog'
+  - "@semantic-release/release-notes-generator"
+  - '@semantic-release/git'
+  - "@semantic-release/github"
+
 analyzeCommits:
-  - path: "@semantic-release/commit-analyzer"
+  - path: '@semantic-release/commit-analyzer'
+    # Determine the type of release by analyzing commits with conventional-changelog
     releaseRules:
-      - type: "feat"
-        release: "patch"
-      - type: "hotfix"
-        release: "patch"
-      - type: "patch"
-        release: "patch"
-      - type: "minor"
-        release: "minor"
-      - type: "breaking"
-        release: "major"
+      - breaking: true
+        release: major
+      - type: build     # Changes that affect the build system or external dependencies
+        # (example scopes: gulp, broccoli, npm)
+        release: patch
+      - type: chore     # Other changes that don't modify src or test files
+        release: false
+      - type: ci        # Changes to our CI configuration files and scripts
+        release: false
+      - type: docs      # Documentation only changes
+        release: patch
+      - type: feat      # A new feature
+        release: minor
+      - type: fix       # A bug fix
+        release: patch
+      - type: perf      # A code change that improves performance
+        release: patch
+      - type: refactor  # A code change that neither fixes a bug nor adds a feature
+        release: false
+      - type: revert    # Reverts a previous commit
+        release: patch
+      - type: style     # Changes that do not affect the meaning of the code
+        # (white-space, formatting, missing semi-colons, etc)
+        release: false
+      - type: test      # Adding missing tests or correcting existing tests
+        release: false
+
 generateNotes:
-  - path: "@semantic-release/release-notes-generator"
+  - path: '@semantic-release/release-notes-generator'
     writerOpts:
-      groupBy: "type"
-      commitGroupsSort:
-        - "feat"
-        - "perf"
-        - "fix"
-      commitsSort: "header"
-    types:
-      - type: "feat"
-      - section: "Features"
-      # Tracked bug fix with a hotfix branch
-      - type: "hotfix"
-      - section: "Bug Fixes"
-      # Uninmportent fix (CI testing, etc)
-      - type: "fix"
-      - hidden: true
-      - type: "chore"
-      - hidden: true
-      - type: "docs"
-      - hidden: true
-      - type: "doc"
-      - hidden: true
-      - type: "style"
-      - hidden: true
-      - type: "refactor"
-      - hidden: true
-      - type: "perf"
-      - hidden: true
-      - type: "test"
-      - hidden: true
-    presetConfig: true
+      groupBy: 'type'
+      commitGroupsSort: 'title'
+      commitsSort: 'header'
+    linkCompare: true
+    linkReferences: true
+    presetConfig:
+      types:  # looks like it only works with 'conventionalcommits' preset
+        - type: 'build'
+          section: '🦊 CI/CD'
+          hidden: false
+        - type: 'chore'
+          section: 'Other'
+          hidden: false
+        - type: 'ci'
+          section: '🦊 CI/CD'
+          hidden: false
+        - type: 'docs'
+          section: '📔 Docs'
+          hidden: false
+        - type: 'example'
+          section: '📝 Examples'
+          hidden: false
+        - type: 'feat'
+          section: '🚀 Features'
+          hidden: false
+        - type: 'fix'
+          section: '🛠 Fixes'
+          hidden: false
+        - type: 'perf'
+          section: '⏩ Performance'
+        - type: 'refactor'
+          section: ':scissors: Refactor'
+          hidden: false
+        - type: 'revert'
+          section: '🙅‍♂️ Reverts'
+        - type: 'style'
+          section: '💈 Style'
+        - type: 'test'
+          section: '🧪 Tests'
+          hidden: false
+
 prepare:
   - path: "@semantic-release/git"
   - path: "@semantic-release/changelog"
     changelogFile: "docs/CHANGELOG.md"
+
+publish:
+  - path: '@semantic-release/github'
+
+success:
+  - path: "@semantic-release/github"
+
+fail:
+  - path: "@semantic-release/github"
