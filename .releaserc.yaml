@@ -3,7 +3,6 @@ branches:
   -
     name: main
     prerelease: false
-preset: "conventionalcommits"
 tagFormat: "${version}"
 plugins:
   - "@semantic-release/commit-analyzer"
@@ -19,6 +18,7 @@ verifyConditions:
 
 analyzeCommits:
   - path: '@semantic-release/commit-analyzer'
+    preset: conventionalcommits
     # Determine the type of release by analyzing commits with conventional-changelog
     releaseRules:
       - breaking: true
@@ -50,6 +50,7 @@ analyzeCommits:
 
 generateNotes:
   - path: '@semantic-release/release-notes-generator'
+    preset: conventionalcommits
     writerOpts:
       groupBy: 'type'
       commitGroupsSort: 'title'
