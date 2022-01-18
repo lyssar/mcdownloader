@@ -1,3 +1,11 @@
+### [1.0.8](https://github.com/lyssar/mcdownloader/compare/1.0.7...1.0.8) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* fix artifact generation ([0ef905b](https://github.com/lyssar/mcdownloader/commit/0ef905bc96f36f323854d38d46f686245caa408a))
+* fix artifact generation ([39d6a01](https://github.com/lyssar/mcdownloader/commit/39d6a01af9043ebddae7335fe029e96a42b7b3f5))
+
 ### [1.0.7](https://github.com/lyssar/mcdownloader/compare/1.0.6...1.0.7) (2022-01-18)
 
 
