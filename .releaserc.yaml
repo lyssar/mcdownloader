@@ -9,7 +9,7 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - "@semantic-release/changelog"
   - "@semantic-release/git"
-  - ["@semantic-release/github", {assets: [{"path": "dist/mcdownloader", "label": "MCDonwload AMD64"}]}]
+  - ["@semantic-release/github"]
 
 verifyConditions:
   - '@semantic-release/changelog'
@@ -101,6 +101,10 @@ prepare:
 
 publish:
   - path: '@semantic-release/github'
+    assets:
+      -
+        path: "./dist/mcdownloader"
+        label: "MCDonwload AMD64"
 
 success:
   - path: "@semantic-release/github"
