@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 13
+      - run: npm i -g conventional-changelog-conventionalcommits
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v2
         with:
