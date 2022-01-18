@@ -1,3 +1,10 @@
+### [1.0.2](https://github.com/lyssar/mcdownloader/compare/1.0.1...1.0.2) (2022-01-18)
+
+
+### 🛠 Fixes
+
+* Added correct glob pattern ([69b39f5](https://github.com/lyssar/mcdownloader/commit/69b39f550c6777f39b04b80aaff1eb7d7b9b272b))
+
 ### [1.0.1](https://github.com/lyssar/mcdownloader/compare/1.0.0...1.0.1) (2022-01-18)
 
 
