@@ -2,13 +2,14 @@ package forge
 
 import (
 	"fmt"
-	"github.com/lyssar/mcdownloader/config"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/lyssar/msdcli/config"
 
 	"github.com/antchfx/htmlquery"
 	"github.com/manifoldco/promptui"

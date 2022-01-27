@@ -1,4 +1,4 @@
-module github.com/lyssar/mcdownloader
+module github.com/lyssar/msdcli
 
 go 1.16
 

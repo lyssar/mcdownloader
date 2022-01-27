@@ -2,10 +2,11 @@ package server
 
 import (
 	"fmt"
-	"github.com/lyssar/mcdownloader/config"
-	"github.com/lyssar/mcdownloader/server/forge"
-	"github.com/manifoldco/promptui"
 	"strings"
+
+	"github.com/lyssar/msdcli/config"
+	"github.com/lyssar/msdcli/server/forge"
+	"github.com/manifoldco/promptui"
 )
 
 func InstalServer() {

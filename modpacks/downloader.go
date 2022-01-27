@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/lyssar/mcdownloader/config"
-	"github.com/manifoldco/promptui"
 	"io"
 	"io/ioutil"
 	"log"
@@ -16,6 +14,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/lyssar/msdcli/config"
+	"github.com/manifoldco/promptui"
 )
 
 func Download() {
