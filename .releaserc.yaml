@@ -103,8 +103,8 @@ publish:
   - path: '@semantic-release/github'
     assets:
       -
-        path: "./mcdownloader"
-        label: "MCDonwload AMD64"
+        path: "./msdcli"
+        label: "Linux amd64"
 
 success:
   - path: "@semantic-release/github"
