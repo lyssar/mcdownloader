@@ -1,3 +1,15 @@
+## [1.1.0](https://github.com/lyssar/msdcli/compare/1.0.0...1.1.0) (2022-01-27)
+
+
+### 📔 Docs
+
+* **MSD-1:** modified documentation ([6847666](https://github.com/lyssar/msdcli/commit/6847666fb996e2bc2f95837726f1d2ac199d9330))
+
+
+### 🚀 Features
+
+* **MSD-1:** renamed project files and binary ([4713c41](https://github.com/lyssar/msdcli/commit/4713c41e9c9a344292ee32b4dd99c7f7329e91a8))
+
 ## [1.0.0](https://github.com/lyssar/mcdownloader/compare/...1.0.0) (2022-01-27)
 
 
