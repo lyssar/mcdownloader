@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Minecraft Server Download CLI 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-blue.svg?cacheSeconds=2592000" />
   <a href="./docs" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -17,7 +17,7 @@
 ## Install
 
 ```sh
-export MSDVERSION="1.0.0"
+export MSDVERSION="1.1.0"
 curl -Lo /usr/local/bin/msdcli "https://github.com/lyssar/msdcli/releases/download/${MSDVERSION}/msdcli-amd64"
 ```
 
