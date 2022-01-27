@@ -1,22 +1,42 @@
-<h1 align="center">Welcome to Minecraft Downloader 👋</h1>
+<h1 align="center">Welcome to Minecraft Server Download CLI 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
-  <a href="https://www.gnu.org/licenses/gpl-3.0.de.html" target="_blank">
-    <img alt="License: GNU" src="https://img.shields.io/badge/License-GNU-yellow.svg" />
+  <a href="./docs" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
-  <a href="https://twitter.com/lyssar\_\_" target="_blank">
-    <img alt="Twitter: lyssar\_\_" src="https://img.shields.io/twitter/follow/lyssar\_\_.svg?style=social" />
+  <a href="https://opensource.org/licenses/MIT" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+  <a href="https://twitter.com/lyssar\_" target="_blank">
+    <img alt="Twitter: lyssar\_" src="https://img.shields.io/twitter/follow/lyssar_.svg?style=social" />
   </a>
 </p>
 
-> Download CLI for minecraft server.
+> msdcli is a golang based cli for linux to easily download and setup a minecraft server with one of the existing launcher like spigot, papermc, forge or fabric.
+
+## Install
+
+```sh
+export MSDVERSION="1.0.0"
+curl -Lo /usr/local/bin/msdcli "https://github.com/lyssar/msdcli/releases/download/${MSDVERSION}/msdcli-amd64"
+```
+
+## Usage
+
+```sh
+# To setup a server; in this case mincraft 1.18.1 with forge 39.0.59
+msdcli server -mcversion "1.18.1" -type "forge" -serverVersion "39.0.59"
+
+# To get a modpack from curseforge
+msdcli modpack -packageId 495683 -serverPackageFileID 3620338
+```
 
 ## Author
 
 👤 **Sebastian Hens**
 
 * Website: http://lyssar.me/
-* Twitter: [@lyssar\_\_](https://twitter.com/lyssar\_\_)
+* Twitter: [@lyssar\_\_](https://twitter.com/lyssar__)
 * Github: [@lyssar](https://github.com/lyssar)
 
 ## 🤝 Contributing
@@ -29,8 +49,8 @@ Give a ⭐️ if this project helped you!
 
 ## 📝 License
 
-Copyright © 2021 [Sebastian Hens](https://github.com/lyssar).<br />
-This project is [GNU](https://www.gnu.org/licenses/gpl-3.0.de.html) licensed.
+Copyright © 2022 [Sebastian Hens](https://github.com/lyssar).<br />
+This project is [MIT](https://opensource.org/licenses/MIT) licensed.
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
