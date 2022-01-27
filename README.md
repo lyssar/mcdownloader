@@ -19,6 +19,7 @@
 ```sh
 export MSDVERSION="1.1.0"
 curl -Lo /usr/local/bin/msdcli "https://github.com/lyssar/msdcli/releases/download/${MSDVERSION}/msdcli-amd64"
+chmod ugo+x /usr/local/bin/msdcli
 ```
 
 ## Usage
