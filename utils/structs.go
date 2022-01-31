@@ -1,6 +1,16 @@
-package modpacks
+package utils
 
 import "time"
+
+type MinecraftVersion struct {
+	ID              string    `json:"id"`
+	Type            string    `json:"type"`
+	URL             string    `json:"url"`
+	Time            time.Time `json:"time"`
+	ReleaseTime     time.Time `json:"releaseTime"`
+	Sha1            string    `json:"sha1"`
+	ComplianceLevel int       `json:"complianceLevel"`
+}
 
 type ModpackFile struct {
 	ID              int           `json:"id"`
@@ -155,4 +165,12 @@ type ModpackDetails struct {
 	IsAvailable          bool        `json:"isAvailable"`
 	IsExperiemental      bool        `json:"isExperiemental"`
 	AllowModDistribution interface{} `json:"allowModDistribution"`
+}
+
+type MinecraftVersionList struct {
+	Latest struct {
+		Release  string `json:"release"`
+		Snapshot string `json:"snapshot"`
+	} `json:"latest"`
+	Versions []MinecraftVersion `json:"versions"`
 }
