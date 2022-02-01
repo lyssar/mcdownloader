@@ -58,14 +58,10 @@ func DownloadInstaller() (utils.MinecraftVersion, ForgeVersion) {
 }
 
 func InstalServer(minecraftVersion utils.MinecraftVersion, forgeVersion ForgeVersion) {
-	eulaFile := []byte("eula=true")
-	err := os.WriteFile("eula.txt", eulaFile, 0644)
+	var err error
+	utils.CreateEula()
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	out, cmdErr := exec.Command("/usr/bin/java", "-jar", getCwd()+"/"+config.InstallerFile, "--installServer").Output()
+	out, cmdErr := exec.Command("/usr/bin/java", "-jar", utils.GetCwd()+"/"+config.InstallerFile, "--installServer").Output()
 
 	if cmdErr != nil {
 		log.Fatal(cmdErr)
@@ -150,7 +146,7 @@ func downloadForge(forgeVersion ForgeVersion) {
 
 	// Create the file
 	fmt.Println("Loading", config.InstallerFile)
-	out, err := os.Create(getCwd() + "/" + config.InstallerFile)
+	out, err := os.Create(utils.GetCwd() + "/" + config.InstallerFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -161,14 +157,6 @@ func downloadForge(forgeVersion ForgeVersion) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func getCwd() string {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return dir
 }
 
 func getMavenDownloadLink(mcVersion string, forgeVersion string) string {
