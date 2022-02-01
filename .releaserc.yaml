@@ -9,6 +9,7 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - "@semantic-release/changelog"
   - "@semantic-release/git"
+  - "@semantic-release/exec"
   - ["@semantic-release/github"]
 
 verifyConditions:
@@ -94,10 +95,14 @@ generateNotes:
           hidden: false
 
 prepare:
+  - path: "@semantic-release/exec"
+    cmd: "export NEXTVERSION=${nextRelease.version} .github/bump-release.sh"
   - path: "@semantic-release/changelog"
     changelogFile: "docs/CHANGELOG.md"
   - path: "@semantic-release/git"
-    assets: "docs/CHANGELOG.md"
+    assets:
+      - "docs/CHANGELOG.md"
+      - "README.md"
 
 publish:
   - path: '@semantic-release/github'
