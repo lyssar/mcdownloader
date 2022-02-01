@@ -19,7 +19,7 @@ func LoadArgs(subcommand string) {
 	switch subcommand {
 	case "server":
 		modpackFlags = flag.NewFlagSet("server", flag.ExitOnError)
-		ServerType = modpackFlags.String("type", "", "Server type. [fabric|forge|papermc|spigot]")
+		ServerType = modpackFlags.String("type", "", "Server type. [vanilla|fabric|forge|papermc|spigot]")
 		McVersion = modpackFlags.String("mcversion", "", "Minecraft version.")
 		ServerVersion = modpackFlags.String("serverVersion", "", "Server version eq. version of your server type.")
 	case "modpack":
