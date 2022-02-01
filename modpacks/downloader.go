@@ -5,22 +5,24 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/lyssar/msdcli/config"
-	"github.com/lyssar/msdcli/utils"
-	"github.com/manifoldco/promptui"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/lyssar/msdcli/config"
+	"github.com/manifoldco/promptui"
 )
 
 func Download() {
 	var packageId int = *config.PackageId
 	var serverPackageFileID int = *config.ServerPackageFileID
-	var modpackDetails utils.ModpackDetails
+	var modpackDetails ModpackDetails
 
 	if packageId <= 0 {
 		validate := func(input string) error {
@@ -58,13 +60,13 @@ func Download() {
 		}
 	}
 
-	var modpackVersion utils.ModpackFile
+	var modpackVersion ModpackFile
 
 	if serverPackageFileID <= 0 {
 		modpackFiles := fetchVersionsOfModpack(modpackDetails.ID)
 		modpackVersion = chooseModpackVersion(modpackFiles)
 	} else {
-		modpackVersion = utils.ModpackFile{ServerPackFileID: serverPackageFileID, ID: packageId}
+		modpackVersion = ModpackFile{ServerPackFileID: serverPackageFileID, ID: packageId}
 	}
 
 	var modpackServerFile string
@@ -83,7 +85,7 @@ func Download() {
 	}
 }
 
-func chooseModpackVersion(modpackFiles utils.ModpackFiles) utils.ModpackFile {
+func chooseModpackVersion(modpackFiles ModpackFiles) ModpackFile {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
 		Active:   promptui.IconSelect + " {{ .DisplayName | cyan }}",
@@ -108,16 +110,16 @@ func chooseModpackVersion(modpackFiles utils.ModpackFiles) utils.ModpackFile {
 
 func fetchServerFileUrl(modpackID int, serverPackFileID int) string {
 	requestUrl := fmt.Sprintf("%s/addon/%d/file/%d/download-url", config.CursforgeApiUrl, modpackID, serverPackFileID)
-	body := utils.ApiCall(requestUrl)
+	body := apiCall(requestUrl)
 
 	return string(body)
 }
 
-func fetchDetailJson(packageId int) utils.ModpackDetails {
+func fetchDetailJson(packageId int) ModpackDetails {
 	requestUrl := fmt.Sprintf("%s/addon/%d", config.CursforgeApiUrl, packageId)
-	body := utils.ApiCall(requestUrl)
+	body := apiCall(requestUrl)
 
-	modpackDetails := utils.ModpackDetails{}
+	modpackDetails := ModpackDetails{}
 	jsonErr := json.Unmarshal(body, &modpackDetails)
 	if jsonErr != nil {
 		return modpackDetails
@@ -126,17 +128,17 @@ func fetchDetailJson(packageId int) utils.ModpackDetails {
 	return modpackDetails
 }
 
-func fetchVersionsOfModpack(packageId int) utils.ModpackFiles {
+func fetchVersionsOfModpack(packageId int) ModpackFiles {
 	requestUrl := fmt.Sprintf("%s/addon/%d/files", config.CursforgeApiUrl, packageId)
-	body := utils.ApiCall(requestUrl)
+	body := apiCall(requestUrl)
 
-	modpackFiles := utils.ModpackFiles{}
+	modpackFiles := ModpackFiles{}
 	jsonErr := json.Unmarshal(body, &modpackFiles)
 	if jsonErr != nil {
 		return modpackFiles
 	}
 
-	var filteredModpackFiles utils.ModpackFiles
+	var filteredModpackFiles ModpackFiles
 	for _, v := range modpackFiles {
 		if v.ReleaseType == 1 {
 			filteredModpackFiles = append(filteredModpackFiles, v)
@@ -144,6 +146,37 @@ func fetchVersionsOfModpack(packageId int) utils.ModpackFiles {
 	}
 
 	return filteredModpackFiles
+}
+
+func apiCall(requestUrl string) []byte {
+	curseforgeApiClient := http.Client{
+		Timeout: time.Second * 10, // Timeout after 10 seconds
+	}
+
+	req, err := http.NewRequest(http.MethodGet, requestUrl, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, getErr := curseforgeApiClient.Do(req)
+	if getErr != nil {
+		log.Fatal(getErr)
+	}
+
+	if res.Body != nil {
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}(res.Body)
+	}
+
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		log.Fatal(readErr)
+	}
+	return body
 }
 
 func unzipModpack(file string, cutRoot bool) {
@@ -193,7 +226,6 @@ func unzipModpack(file string, cutRoot bool) {
 			fmt.Println("invalid file path")
 			return
 		}
-
 		if f.FileInfo().IsDir() {
 			fmt.Println("creating directory...")
 			os.MkdirAll(filePath, os.ModePerm)
