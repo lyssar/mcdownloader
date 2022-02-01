@@ -2,7 +2,6 @@ package forge
 
 import (
 	"fmt"
-	"github.com/lyssar/msdcli/utils"
 	"io"
 	"log"
 	"net/http"
@@ -26,28 +25,28 @@ type MinecraftVersion struct {
 	Page    string
 }
 
-func DownloadInstaller() (utils.MinecraftVersion, ForgeVersion) {
-	var minecraftVersion utils.MinecraftVersion
+func DownloadInstaller() (MinecraftVersion, ForgeVersion) {
+	var minecraftVersion MinecraftVersion
 	var forgeVersion ForgeVersion
 	if *config.McVersion == "" {
-		minecraftVersion = utils.SelectMinecraftVersion()
+		minecraftVersion = selectMinecraftVersion()
 	} else {
-		minecraftVersion = utils.GetMinecraftVersionInfo(*config.McVersion)
+		minecraftVersion = MinecraftVersion{Version: *config.McVersion, Page: "index_" + *config.McVersion + ".html"}
 	}
 
-	fmt.Printf("MC Version: %s\n", minecraftVersion.ID)
+	fmt.Printf("MC Version: %s\n", minecraftVersion.Version)
 
 	if *config.ServerVersion == "" {
 		forgeVersion = selectForgeVersion(minecraftVersion)
 	} else {
-		forgeVersion = ForgeVersion{Version: *config.ServerVersion, Installer: getMavenDownloadLink(minecraftVersion.ID, *config.ServerVersion)}
+		forgeVersion = ForgeVersion{Version: *config.ServerVersion, Installer: getMavenDownloadLink(minecraftVersion.Version, *config.ServerVersion)}
 	}
 
 	fmt.Printf("Forge Version: %s\n", forgeVersion.Version)
 
 	downloadForge(forgeVersion)
 
-	eulaFile := []byte("forge-" + minecraftVersion.ID + "-" + forgeVersion.Version)
+	eulaFile := []byte("forge-" + minecraftVersion.Version + "-" + forgeVersion.Version)
 	err := os.WriteFile("version.txt", eulaFile, 0644)
 
 	if err != nil {
@@ -57,18 +56,22 @@ func DownloadInstaller() (utils.MinecraftVersion, ForgeVersion) {
 	return minecraftVersion, forgeVersion
 }
 
-func InstalServer(minecraftVersion utils.MinecraftVersion, forgeVersion ForgeVersion) {
-	var err error
-	utils.CreateEula()
+func InstalServer(minecraftVerion MinecraftVersion, forgeVersion ForgeVersion) {
+	eulaFile := []byte("eula=true")
+	err := os.WriteFile("eula.txt", eulaFile, 0644)
 
-	out, cmdErr := exec.Command("/usr/bin/java", "-jar", utils.GetCwd()+"/"+config.InstallerFile, "--installServer").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out, cmdErr := exec.Command("/usr/bin/java", "-jar", getCwd()+"/"+config.InstallerFile, "--installServer").Output()
 
 	if cmdErr != nil {
 		log.Fatal(cmdErr)
 	}
 	fmt.Println(string(out))
 
-	renamErr := os.Rename("forge-"+minecraftVersion.ID+"-"+forgeVersion.Version+".jar", config.ServerFile)
+	renamErr := os.Rename("forge-"+minecraftVerion.Version+"-"+forgeVersion.Version+".jar", config.ServerFile)
 	if renamErr != nil {
 		log.Fatal(renamErr)
 	}
@@ -86,7 +89,32 @@ func InstalServer(minecraftVersion utils.MinecraftVersion, forgeVersion ForgeVer
 	fmt.Println("Forge installed. Please configure your server.properties file before starting")
 }
 
-func selectForgeVersion(minecraftVersion utils.MinecraftVersion) ForgeVersion {
+func selectMinecraftVersion() MinecraftVersion {
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   promptui.IconSelect + " {{ .Version | cyan }}",
+		Inactive: "  {{ .Version | white }}",
+		Selected: promptui.IconGood + " Mincraft Version: {{ .Version | black }}",
+	}
+
+	versionList := getMinecraftVersionList()
+
+	prompt := promptui.Select{
+		Label:     "Select Minecraft version:",
+		Items:     versionList,
+		Templates: templates,
+	}
+
+	i, _, err := prompt.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return versionList[i]
+}
+
+func selectForgeVersion(minecraftVersion MinecraftVersion) ForgeVersion {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
 		Active:   promptui.IconSelect + " {{ .Version | cyan }}",
@@ -111,24 +139,50 @@ func selectForgeVersion(minecraftVersion utils.MinecraftVersion) ForgeVersion {
 	return forgeVersionList[i]
 }
 
-func getForgeVersionForMinecraftVersion(mcVersion utils.MinecraftVersion) []ForgeVersion {
+func getMinecraftVersionList() []MinecraftVersion {
+	versionListItems := []MinecraftVersion{}
+	fmt.Println("Loading minecraft version list.")
+	doc, err := htmlquery.LoadURL("https://files.minecraftforge.net/net/minecraftforge/forge/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	activeVersion := htmlquery.FindOne(doc, "//li[contains(@class, 'li-version-list')]/ul/li[contains(@class, 'elem-active')]")
+	minecraftVersion := MinecraftVersion{Version: htmlquery.InnerText(activeVersion), Page: "index_" + htmlquery.InnerText(activeVersion) + ".html"}
+
+	versionListItems = append(versionListItems, minecraftVersion)
+
+	links := htmlquery.Find(doc, "//li[contains(@class, 'li-version-list')]/ul/li/a[@href]")
+	for _, n := range links {
+		url := htmlquery.SelectAttr(n, "href")
+		versionStr := strings.ReplaceAll(strings.ReplaceAll(url, "index_", ""), ".html", "")
+
+		minecraftVersion := MinecraftVersion{Version: versionStr, Page: url}
+
+		versionListItems = append(versionListItems, minecraftVersion)
+	}
+
+	return versionListItems
+}
+
+func getForgeVersionForMinecraftVersion(mcVersion MinecraftVersion) []ForgeVersion {
 	versionList := []ForgeVersion{}
 
-	fmt.Printf("Loading forge version list for minecraft %s.\n", mcVersion.ID)
-	loadUrl := fmt.Sprintf("https://files.minecraftforge.net/net/minecraftforge/forge/index_%s.html", mcVersion.ID)
-	doc, err := htmlquery.LoadURL(loadUrl)
+	fmt.Printf("Loading forge version list for minecraft %s.\n", mcVersion.Version)
+
+	doc, err := htmlquery.LoadURL("https://files.minecraftforge.net/net/minecraftforge/forge/" + mcVersion.Page)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	links := htmlquery.Find(doc, "//table[contains(@class, 'download-list')]/tbody/tr/td[contains(@class, 'download-version')]")
 	for _, n := range links {
-		forgeVersionNumberString := strings.Trim(htmlquery.InnerText(n), " \n")
-		installer := getMavenDownloadLink(mcVersion.ID, forgeVersionNumberString)
+		forgeVersion := strings.Trim(htmlquery.InnerText(n), " \n")
+		installer := getMavenDownloadLink(mcVersion.Version, forgeVersion)
 
-		forgeVersion := ForgeVersion{Version: forgeVersionNumberString, Installer: installer}
+		forgetVersion := ForgeVersion{Version: forgeVersion, Installer: installer}
 
-		versionList = append(versionList, forgeVersion)
+		versionList = append(versionList, forgetVersion)
 	}
 
 	return versionList
@@ -146,7 +200,7 @@ func downloadForge(forgeVersion ForgeVersion) {
 
 	// Create the file
 	fmt.Println("Loading", config.InstallerFile)
-	out, err := os.Create(utils.GetCwd() + "/" + config.InstallerFile)
+	out, err := os.Create(getCwd() + "/" + config.InstallerFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -157,6 +211,14 @@ func downloadForge(forgeVersion ForgeVersion) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getCwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return dir
 }
 
 func getMavenDownloadLink(mcVersion string, forgeVersion string) string {

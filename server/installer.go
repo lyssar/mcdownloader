@@ -6,7 +6,6 @@ import (
 
 	"github.com/lyssar/msdcli/config"
 	"github.com/lyssar/msdcli/server/forge"
-	"github.com/lyssar/msdcli/server/vanilla"
 	"github.com/manifoldco/promptui"
 )
 
@@ -15,7 +14,7 @@ func InstalServer() {
 	if serverType == "" {
 		prompt := promptui.Select{
 			Label: "Select server type",
-			Items: []string{"Vanilla", "Forge", "Fabric", "Spitgot", "PaperMC"},
+			Items: []string{"Forge", "Fabric", "Spitgot", "PaperMC"},
 		}
 		_, result, err := prompt.Run()
 
@@ -29,10 +28,7 @@ func InstalServer() {
 
 	switch serverType {
 	case "forge":
-		minecraftVersion, forgeVersion := forge.DownloadInstaller()
-		forge.InstalServer(minecraftVersion, forgeVersion)
-	case "vanilla":
-		vanilla.DownloadInstaller()
-		vanilla.InstalServer()
+		minecraftVerion, forgeVersion := forge.DownloadInstaller()
+		forge.InstalServer(minecraftVerion, forgeVersion)
 	}
 }
