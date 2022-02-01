@@ -1,3 +1,22 @@
+## [1.2.0](https://github.com/lyssar/msdcli/compare/1.1.0...1.2.0) (2022-02-01)
+
+
+### 📔 Docs
+
+* Added additional infos for installation [skip ci] ([2d61b46](https://github.com/lyssar/msdcli/commit/2d61b4696c8e3f958a041e40a6042e47e6e00ffd))
+
+
+### 🚀 Features
+
+* **MCD-14:** added vanilla server jar download and refactored minecraft version fetching ([5d21fe1](https://github.com/lyssar/msdcli/commit/5d21fe1ed56a4143102ea6a39a0843d0bff6ad4b))
+* **MCD-14:** Moved api calls and mc version to utils package and added vanilla server selection ([5602e08](https://github.com/lyssar/msdcli/commit/5602e0849acfe2999edfc295c5ac8b67f62ba494))
+
+
+### Other
+
+* added suffix and bumped readme versions [skip ci] ([fce298a](https://github.com/lyssar/msdcli/commit/fce298a16a4b6fc4ad9ffd1b507d2175efc25320))
+* **MCD-14:** Added version bumping in README file ([9a79aa7](https://github.com/lyssar/msdcli/commit/9a79aa7f1cc7ad0d457e54b5059d6dc4b0a032fe))
+
 ## [1.1.0](https://github.com/lyssar/msdcli/compare/1.0.0...1.1.0) (2022-01-27)
 
 
