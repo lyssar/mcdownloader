@@ -32,7 +32,7 @@ func InstalServer() {
 		minecraftVersion, forgeVersion := forge.DownloadInstaller()
 		forge.InstalServer(minecraftVersion, forgeVersion)
 	case "vanilla":
-		minecraftVersion := vanilla.DownloadInstaller()
-		vanilla.InstalServer(minecraftVersion)
+		vanilla.DownloadInstaller()
+		vanilla.InstalServer()
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/lyssar/msdcli/config"
 	"github.com/manifoldco/promptui"
 	"log"
+	"os"
 )
 
 func SelectMinecraftVersion() MinecraftVersion {
@@ -47,6 +48,15 @@ func GetMinecraftVersionInfo(minecraftVersionNumber string) MinecraftVersion {
 	}
 
 	return mcVersion
+}
+
+func CreateEula() {
+	eulaFile := []byte("eula=true")
+	err := os.WriteFile("eula.txt", eulaFile, 0644)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func fetchMinecraftVersions(filter []string) []MinecraftVersion {
