@@ -96,7 +96,7 @@ generateNotes:
 
 prepare:
   - path: "@semantic-release/exec"
-    cmd: "export NEXTVERSION=${nextRelease.version} .github/bump-release.sh"
+    cmd: "NEXTVERSION=${nextRelease.version} .github/bump-release.sh"
   - path: "@semantic-release/changelog"
     changelogFile: "docs/CHANGELOG.md"
   - path: "@semantic-release/git"
