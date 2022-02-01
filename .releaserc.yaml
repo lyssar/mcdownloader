@@ -62,19 +62,19 @@ generateNotes:
       types:  # looks like it only works with 'conventionalcommits' preset
         - type: 'build'
           section: '🦊 CI/CD'
-          hidden: false
+          hidden: true
         - type: 'chore'
           section: 'Other'
-          hidden: false
+          hidden: true
         - type: 'ci'
           section: '🦊 CI/CD'
-          hidden: false
+          hidden: true
         - type: 'docs'
           section: '📔 Docs'
           hidden: false
         - type: 'example'
           section: '📝 Examples'
-          hidden: false
+          hidden: true
         - type: 'feat'
           section: '🚀 Features'
           hidden: false
@@ -92,7 +92,7 @@ generateNotes:
           section: '💈 Style'
         - type: 'test'
           section: '🧪 Tests'
-          hidden: false
+          hidden: true
 
 prepare:
   - path: "@semantic-release/exec"
