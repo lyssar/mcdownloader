@@ -1,10 +1,13 @@
 package utils
 
 import (
+	"fmt"
+	"github.com/lyssar/msdcli/config"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -37,4 +40,38 @@ func ApiCall(requestUrl string) []byte {
 		log.Fatal(readErr)
 	}
 	return body
+}
+
+func FabricApiCall(uri string, version string) []byte {
+	baseUrl := config.FabricApiBaseUrl
+	if version == "v2" {
+		baseUrl = config.FabricApiV2BaseUrl
+	}
+	apiUrl := fmt.Sprintf("%s/%s", baseUrl, uri)
+	return ApiCall(apiUrl)
+}
+
+func DownloadInstaller(url string) {
+	fmt.Println("Downloading installer")
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	fmt.Println("Saving file", config.InstallerFile)
+	out, err := os.Create(GetCwd() + "/" + config.InstallerFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -294,3 +294,34 @@ type MinecraftVersionDetails struct {
 	Time                   time.Time `json:"time"`
 	Type                   string    `json:"type"`
 }
+
+type FabricLoader struct {
+	Separator string `json:"separator"`
+	Build     int    `json:"build"`
+	Maven     string `json:"maven"`
+	Version   string `json:"version"`
+	Stable    bool   `json:"stable"`
+}
+
+type FabricLoaderMapping struct {
+	GameVersion string `json:"gameVersion"`
+	Separator   string `json:"separator"`
+	Build       int    `json:"build"`
+	Maven       string `json:"maven"`
+	Version     string `json:"version"`
+	Stable      bool   `json:"stable"`
+}
+
+type FabricLoaderList []struct {
+	Loader   FabricLoader        `json:"loader"`
+	Mappings FabricLoaderMapping `json:"mappings"`
+}
+
+type FabricInstaller struct {
+	URL     string `json:"url"`
+	Maven   string `json:"maven"`
+	Version string `json:"version"`
+	Stable  bool   `json:"stable"`
+}
+
+type FabricInstallerList []FabricInstaller

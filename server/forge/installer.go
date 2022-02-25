@@ -3,9 +3,7 @@ package forge
 import (
 	"fmt"
 	"github.com/lyssar/msdcli/utils"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -45,7 +43,8 @@ func DownloadInstaller() (utils.MinecraftVersion, ForgeVersion) {
 
 	fmt.Printf("Forge Version: %s\n", forgeVersion.Version)
 
-	downloadForge(forgeVersion)
+	fmt.Println("Downloading forge version: ", forgeVersion.Version)
+	utils.DownloadInstaller(forgeVersion.Installer)
 
 	eulaFile := []byte("forge-" + minecraftVersion.ID + "-" + forgeVersion.Version)
 	err := os.WriteFile("version.txt", eulaFile, 0644)
@@ -132,31 +131,6 @@ func getForgeVersionForMinecraftVersion(mcVersion utils.MinecraftVersion) []Forg
 	}
 
 	return versionList
-}
-
-func downloadForge(forgeVersion ForgeVersion) {
-	fmt.Println("Downloading forge version: ", forgeVersion.Version)
-
-	// Get the data
-	resp, err := http.Get(forgeVersion.Installer)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	// Create the file
-	fmt.Println("Loading", config.InstallerFile)
-	out, err := os.Create(utils.GetCwd() + "/" + config.InstallerFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer out.Close()
-
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func getMavenDownloadLink(mcVersion string, forgeVersion string) string {

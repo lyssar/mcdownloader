@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/lyssar/msdcli/server/fabric"
 	"strings"
 
 	"github.com/lyssar/msdcli/config"
@@ -31,6 +32,9 @@ func InstalServer() {
 	case "forge":
 		minecraftVersion, forgeVersion := forge.DownloadInstaller()
 		forge.InstalServer(minecraftVersion, forgeVersion)
+	case "fabric":
+		fabric.DownloadInstaller()
+		fabric.InstalServer()
 	case "vanilla":
 		vanilla.DownloadInstaller()
 		vanilla.InstalServer()

@@ -18,8 +18,7 @@ func DownloadInstaller() {
 	} else {
 		minecraftVersion = utils.GetMinecraftVersionInfo(*config.McVersion)
 	}
-	// downloads
-	fmt.Printf("%+v\n", minecraftVersion)
+
 	downloadServerJar(minecraftVersion)
 }
 
