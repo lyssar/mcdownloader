@@ -22,7 +22,7 @@ jobs:
       - name: Generate build files
         uses: thatisuday/go-cross-build@master
         with:
-            platforms: 'linux/amd64, darwin/amd64, windows/amd64, linux/arm64'
+            platforms: 'linux/amd64, linux/arm64'
             package: ./
             name: 'msdcli'
             compress: 'false'
