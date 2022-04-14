@@ -108,8 +108,11 @@ publish:
   - path: '@semantic-release/github'
     assets:
       -
-        path: "./msdcli-amd64"
+        path: "./msdcli-linux-amd64"
         label: "Linux amd64"
+      - 
+        path: "./msdcli-linux-arm64"
+        label: "Linux arm64"
 
 success:
   - path: "@semantic-release/github"
