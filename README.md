@@ -18,8 +18,10 @@
 
 ```sh
 export MSDVERSION="1.3.1"
-curl -Lo /usr/local/bin/msdcli "https://github.com/lyssar/msdcli/releases/download/${MSDVERSION}/msdcli-amd64"
-chmod ugo+x /usr/local/bin/msdcli
+export MSDPLATFORM="linux"
+export MSDFARCH="amd64"
+sudo curl -Lo /usr/local/bin/msdcli "https://github.com/lyssar/msdcli/releases/download/${MSDVERSION}/msdcli-${MSDPLATFORM}-${MSDFARCH}"
+sudo chmod ugo+x /usr/local/bin/msdcli
 ```
 
 ## Usage
