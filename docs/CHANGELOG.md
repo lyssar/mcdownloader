@@ -1,3 +1,10 @@
+### [1.3.1](https://github.com/lyssar/msdcli/compare/1.3.0...1.3.1) (2022-04-14)
+
+
+### 🛠 Fixes
+
+* fixed binary file names for multi arch ([a7d6d19](https://github.com/lyssar/msdcli/commit/a7d6d192379575b6b345975499ca9d51e9963237))
+
 ## [1.3.0](https://github.com/lyssar/msdcli/compare/1.2.0...1.3.0) (2022-04-14)
 
 
