@@ -1,3 +1,16 @@
+## [1.3.0](https://github.com/lyssar/msdcli/compare/1.2.0...1.3.0) (2022-04-14)
+
+
+### 🚀 Features
+
+* added multi platform ([5e1e92c](https://github.com/lyssar/msdcli/commit/5e1e92cc4a94be90f1899c753a5e7384bfcba162))
+
+
+### 🛠 Fixes
+
+* changed build action to master ([19b362e](https://github.com/lyssar/msdcli/commit/19b362e72ffb819303522a528c17d87fb0c13753))
+* changed platforms ([145d190](https://github.com/lyssar/msdcli/commit/145d19070f8023a04e9c89a39357f04b78a0c084))
+
 ## [1.2.0](https://github.com/lyssar/msdcli/compare/1.1.0...1.2.0) (2022-02-01)
 
 ### 🚀 Features
