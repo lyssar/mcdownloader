@@ -1,3 +1,15 @@
+## [1.3.2](https://github.com/lyssar/msdcli/compare/1.3.1...1.3.2) (2022-06-03)
+
+
+### 📔 Docs
+
+* added arch and platform to curl example [skip ci] ([7203111](https://github.com/lyssar/msdcli/commit/7203111e33c672590ff321c4cdb0f5befb7fd982))
+
+
+### 🛠 Fixes
+
+* **deps:** update module github.com/antchfx/htmlquery to v1.2.5 ([cbc5d23](https://github.com/lyssar/msdcli/commit/cbc5d23915d74672eada4dec3aa5c0dfdf9fe439))
+
 ### [1.3.1](https://github.com/lyssar/msdcli/compare/1.3.0...1.3.1) (2022-04-14)
 
 
