@@ -1,7 +1,7 @@
 <h1 align="center">Welcome to Minecraft Server Download CLI 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.3.2-blue.svg?cacheSeconds=2592000" />
-  <a href="./docs" target="_blank">
+  <a href="old/docs" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="https://opensource.org/licenses/MIT" target="_blank">

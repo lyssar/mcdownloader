@@ -1,0 +1,5 @@
+curseforge:
+    baseUrlProtocol: https
+    baseUrl: api.curseforge.com
+    apiKey: $2a$10$fvytTHoBe7vTxPAUTMAoSOBZjfeWqcCMzXuc0mf3kdZyBd5Htr8Em
+    minecraftGameID: 432
