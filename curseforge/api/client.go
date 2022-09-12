@@ -30,8 +30,9 @@ var defaultBaseURL = url.URL{
 }
 
 var defaultHeader = CurseforgeClientHeader{
-	"Accept":    []string{"application/json"},
-	"x-api-key": []string{utils.GetConfig().CurseForge.ApiKey},
+	"Content-Type": []string{"application/json"},
+	"Accept":       []string{"application/json"},
+	"x-api-key":    []string{utils.GetConfig().CurseForge.ApiKey},
 }
 
 func createHttpRequest(method string, url *url.URL, queryValues *url.Values, data *io.Reader, headers CurseforgeClientHeader) (req *http.Request, err error) {
