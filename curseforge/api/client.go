@@ -49,7 +49,7 @@ func createHttpRequest(method string, url *url.URL, queryValues *url.Values, dat
 
 // NewCurseforgeClientForRoute returns a new client that calls uri.
 func NewCurseforgeClientForRoute(uri string) *CurseforgeClient {
-	return &CurseforgeClient{uri: uri, method: "GET", headers: defaultHeader, baseUrl: defaultBaseURL}
+	return &CurseforgeClient{uri: uri, method: http.MethodGet, headers: defaultHeader, baseUrl: defaultBaseURL}
 }
 
 func (client *CurseforgeClient) BaseUrl(baseUrl url.URL) {
@@ -64,8 +64,8 @@ func (client *CurseforgeClient) Query(queryValues *url.Values) {
 	client.queryValues = queryValues
 }
 
-func (client *CurseforgeClient) Data(bodyData *io.Reader) {
-	client.bodyData = bodyData
+func (client *CurseforgeClient) Data(bodyData io.Reader) {
+	client.bodyData = &bodyData
 }
 
 func (client *CurseforgeClient) Request() {
