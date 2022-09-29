@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/lyssar/msdcli/utils"
 	"io"
 	"net/http"
 	"net/url"
@@ -10,6 +9,17 @@ import (
 )
 
 type CurseforgeClientHeader map[string][]string
+
+func (header CurseforgeClientHeader) Add(addtionalHeader *CurseforgeClientHeader) CurseforgeClientHeader {
+	var newHeader CurseforgeClientHeader
+	additionalMarchaled, _ := json.Marshal(addtionalHeader)
+	headerMarshaled, _ := json.Marshal(header)
+
+	_ = json.Unmarshal(headerMarshaled, &newHeader)
+	_ = json.Unmarshal(headerMarshaled, &additionalMarchaled)
+
+	return newHeader
+}
 
 // CurseforgeClient Curseforge api client
 type CurseforgeClient struct {
@@ -24,14 +34,22 @@ type CurseforgeClient struct {
 }
 
 var defaultBaseURL = url.URL{
-	Scheme: utils.GetConfig().CurseForge.BaseUrlProtocol,
-	Host:   utils.GetConfig().CurseForge.BaseUrl,
+	Scheme: "https",
+	Host:   "api.curseforge.com",
 	Path:   "",
 }
 
-var defaultHeader = CurseforgeClientHeader{
-	"Accept":    []string{"application/json"},
-	"x-api-key": []string{utils.GetConfig().CurseForge.ApiKey},
+// newCurseforgeClientForRoute returns a new client that calls uri.
+func (api CurseforgeApi) newCurseforgeClientForRoute(uri string) *CurseforgeClient {
+	return &CurseforgeClient{uri: uri, method: http.MethodGet, headers: api.clientHeader(), baseUrl: api.baseURL()}
+}
+
+func (client *CurseforgeClient) BaseUrl(baseUrl url.URL) {
+	client.baseUrl = baseUrl
+}
+
+func (client *CurseforgeClient) Method(method string) {
+	client.method = method
 }
 
 func createHttpRequest(method string, url *url.URL, queryValues *url.Values, data *io.Reader, headers CurseforgeClientHeader) (req *http.Request, err error) {
@@ -45,19 +63,6 @@ func createHttpRequest(method string, url *url.URL, queryValues *url.Values, dat
 	}
 
 	return
-}
-
-// NewCurseforgeClientForRoute returns a new client that calls uri.
-func NewCurseforgeClientForRoute(uri string) *CurseforgeClient {
-	return &CurseforgeClient{uri: uri, method: http.MethodGet, headers: defaultHeader, baseUrl: defaultBaseURL}
-}
-
-func (client *CurseforgeClient) BaseUrl(baseUrl url.URL) {
-	client.baseUrl = baseUrl
-}
-
-func (client *CurseforgeClient) Method(method string) {
-	client.method = method
 }
 
 func (client *CurseforgeClient) Query(queryValues *url.Values) {

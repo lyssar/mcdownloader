@@ -1,4 +1,4 @@
-package curseforge
+package utils
 
 import (
 	"strings"

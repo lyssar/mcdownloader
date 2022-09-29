@@ -8,8 +8,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/google/go-querystring/query"
-	"github.com/lyssar/msdcli/curseforge"
 	"github.com/lyssar/msdcli/curseforge/schemas"
+	"github.com/lyssar/msdcli/curseforge/utils"
 	"net/http"
 	"strconv"
 )
@@ -38,10 +38,10 @@ type SearchModsRequestData struct {
 }
 
 // SearchMods @see https://docs.curseforge.com/?go#search-mods
-func SearchMods(requestData SearchModsRequestData) (response schemas.SearchModsResponse, err error) {
+func (api CurseforgeApi) SearchMods(requestData SearchModsRequestData) (response schemas.SearchModsResponse, err error) {
 	q, _ := query.Values(requestData)
 
-	client := NewCurseforgeClientForRoute(string(UriModsSearch))
+	client := api.newCurseforgeClientForRoute(string(UriModsSearch))
 	client.Query(&q)
 	client.Request()
 	err = client.GetContent(&response)
@@ -50,10 +50,10 @@ func SearchMods(requestData SearchModsRequestData) (response schemas.SearchModsR
 }
 
 // GetMod @see https://docs.curseforge.com/?go#get-mod
-func GetMod(modID int) (response schemas.GetModResponse, err error) {
-	uri := curseforge.ReplaceNamed(string(UriMod), map[string]string{"modId": strconv.Itoa(modID)})
+func (api CurseforgeApi) GetMod(modID int) (response schemas.GetModResponse, err error) {
+	uri := utils.ReplaceNamed(string(UriMod), map[string]string{"modId": strconv.Itoa(modID)})
 
-	client := NewCurseforgeClientForRoute(uri)
+	client := api.newCurseforgeClientForRoute(uri)
 	client.Request()
 	err = client.GetContent(&response)
 
@@ -61,10 +61,10 @@ func GetMod(modID int) (response schemas.GetModResponse, err error) {
 }
 
 // GetMods @see https://docs.curseforge.com/?go#get-mods
-func GetMods(requestData schemas.GetModsByIdsListRequestBody) (response schemas.GetModsResponse, err error) {
+func (api CurseforgeApi) GetMods(requestData schemas.GetModsByIdsListRequestBody) (response schemas.GetModsResponse, err error) {
 	data, err := json.Marshal(requestData)
 
-	client := NewCurseforgeClientForRoute(string(UriMods))
+	client := api.newCurseforgeClientForRoute(string(UriMods))
 	client.Method(http.MethodPost)
 	client.Data(bytes.NewReader(data))
 	client.Request()
@@ -74,10 +74,10 @@ func GetMods(requestData schemas.GetModsByIdsListRequestBody) (response schemas.
 }
 
 // GetFeaturedMods @see https://docs.curseforge.com/?go#get-featured-mods
-func GetFeaturedMods(requestData schemas.GetFeaturedModsRequestBody) (response schemas.GetFeaturedModsResponse, err error) {
+func (api CurseforgeApi) GetFeaturedMods(requestData schemas.GetFeaturedModsRequestBody) (response schemas.GetFeaturedModsResponse, err error) {
 	data, err := json.Marshal(requestData)
 
-	client := NewCurseforgeClientForRoute(string(UriModsFeatured))
+	client := api.newCurseforgeClientForRoute(string(UriModsFeatured))
 	client.Method(http.MethodPost)
 	client.Data(bytes.NewReader(data))
 	client.Request()
@@ -86,10 +86,10 @@ func GetFeaturedMods(requestData schemas.GetFeaturedModsRequestBody) (response s
 }
 
 // GetModDescription @see https://docs.curseforge.com/?go#get-mod-description
-func GetModDescription(modID int) (response schemas.StringResponse, err error) {
-	uri := curseforge.ReplaceNamed(string(UriModDescription), map[string]string{"modId": strconv.Itoa(modID)})
+func (api CurseforgeApi) GetModDescription(modID int) (response schemas.StringResponse, err error) {
+	uri := utils.ReplaceNamed(string(UriModDescription), map[string]string{"modId": strconv.Itoa(modID)})
 
-	client := NewCurseforgeClientForRoute(uri)
+	client := api.newCurseforgeClientForRoute(uri)
 	client.Request()
 	err = client.GetContent(&response)
 

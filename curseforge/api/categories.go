@@ -15,14 +15,14 @@ const (
 )
 
 // GetCategories @see https://docs.curseforge.com/?go#get-categories
-func GetCategories(gameID int, classID *int) (response schemas.GetCategoriesResponse, err error) {
+func (api CurseforgeApi) GetCategories(gameID int, classID *int) (response schemas.GetCategoriesResponse, err error) {
 	q := url.Values{}
 	q.Add("gameId", strconv.Itoa(gameID))
 	if classID != nil {
 		q.Add("classId", strconv.Itoa(*classID))
 	}
 
-	curseforgeClient := NewCurseforgeClientForRoute(string(UriCategories))
+	curseforgeClient := api.newCurseforgeClientForRoute(string(UriCategories))
 	curseforgeClient.Query(&q)
 	curseforgeClient.Request()
 	err = curseforgeClient.GetContent(&response)

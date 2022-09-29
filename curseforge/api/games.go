@@ -5,8 +5,8 @@
 package api
 
 import (
-	"github.com/lyssar/msdcli/curseforge"
 	"github.com/lyssar/msdcli/curseforge/schemas"
+	"github.com/lyssar/msdcli/curseforge/utils"
 	"net/url"
 	"strconv"
 )
@@ -19,12 +19,12 @@ const (
 )
 
 // GetGames @see https://docs.curseforge.com/?go#get-games
-func GetGames(index int, pageSize int) (response schemas.GetGamesResponse, err error) {
+func (api CurseforgeApi) GetGames(index int, pageSize int) (response schemas.GetGamesResponse, err error) {
 	q := url.Values{}
 	q.Add("index", strconv.Itoa(index))
 	q.Add("pageSize", strconv.Itoa(pageSize))
 
-	client := NewCurseforgeClientForRoute(string(UriGames))
+	client := api.newCurseforgeClientForRoute(string(UriGames))
 	client.Query(&q)
 	client.Request()
 	err = client.GetContent(&response)
@@ -33,10 +33,10 @@ func GetGames(index int, pageSize int) (response schemas.GetGamesResponse, err e
 }
 
 // GetGame @see https://docs.curseforge.com/?go#get-game
-func GetGame(gameId int) (game schemas.GetGameResponse, err error) {
-	uri := curseforge.ReplaceNamed(string(UriGame), map[string]string{"gameId": strconv.Itoa(gameId)})
+func (api CurseforgeApi) GetGame(gameId int) (game schemas.GetGameResponse, err error) {
+	uri := utils.ReplaceNamed(string(UriGame), map[string]string{"gameId": strconv.Itoa(gameId)})
 
-	client := NewCurseforgeClientForRoute(uri)
+	client := api.newCurseforgeClientForRoute(uri)
 	client.Request()
 	err = client.GetContent(&game)
 
@@ -44,18 +44,18 @@ func GetGame(gameId int) (game schemas.GetGameResponse, err error) {
 }
 
 // GetVersions @see https://docs.curseforge.com/?go#get-versions
-func GetVersions(gameId int) (response schemas.GetVersionsResponse, err error) {
-	uri := curseforge.ReplaceNamed(string(UriGamesVersions), map[string]string{"gameId": strconv.Itoa(gameId)})
-	client := NewCurseforgeClientForRoute(uri)
+func (api CurseforgeApi) GetVersions(gameId int) (response schemas.GetVersionsResponse, err error) {
+	uri := utils.ReplaceNamed(string(UriGamesVersions), map[string]string{"gameId": strconv.Itoa(gameId)})
+	client := api.newCurseforgeClientForRoute(uri)
 	client.Request()
 	err = client.GetContent(&response)
 	return
 }
 
 // GetVersionTypes @see https://docs.curseforge.com/?go#get-version-types
-func GetVersionTypes(gameId int) (response schemas.GetVersionTypesResponse, err error) {
-	uri := curseforge.ReplaceNamed(string(UriGamesVersionTypes), map[string]string{"gameId": strconv.Itoa(gameId)})
-	client := NewCurseforgeClientForRoute(uri)
+func (api CurseforgeApi) GetVersionTypes(gameId int) (response schemas.GetVersionTypesResponse, err error) {
+	uri := utils.ReplaceNamed(string(UriGamesVersionTypes), map[string]string{"gameId": strconv.Itoa(gameId)})
+	client := api.newCurseforgeClientForRoute(uri)
 	client.Request()
 	err = client.GetContent(&response)
 	return
