@@ -5,20 +5,20 @@ import "time"
 type ModLoaderInstallMethod int
 
 const (
-	MOD_LOADER_INSTALL_METHOD_FORGE_INSTALLER    ModLoaderInstallMethod = 1
-	MOD_LOADER_INSTALL_METHOD_FORGE_JAR_INSTALL  ModLoaderInstallMethod = 2
-	MOD_LOADER_INSTALL_METHOD_FORGE_INSTALLER_V2 ModLoaderInstallMethod = 3
+	ModLoaderInstallMethodForgeInstaller   ModLoaderInstallMethod = 1
+	ModLoaderInstallMethodForgeJarInstall  ModLoaderInstallMethod = 2
+	ModLoaderInstallMethodForgeInstallerV2 ModLoaderInstallMethod = 3
 )
 
 type ModLoaderType int
 
 const (
-	MOD_LOADER_TYPE_ANY         FileStatus = 0
-	MOD_LOADER_TYPE_FORGE       FileStatus = 1
-	MOD_LOADER_TYPE_CAULDRON    FileStatus = 2
-	MOD_LOADER_TYPE_LITE_LOADER FileStatus = 3
-	MOD_LOADER_TYPE_FABRIC      FileStatus = 4
-	MOD_LOADER_TYPE_QUILT       FileStatus = 5
+	ModLoaderTypeAny        FileStatus = 0
+	ModLoaderTypeForge      FileStatus = 1
+	ModLoaderTypeCauldron   FileStatus = 2
+	ModLoaderTypeLiteLoader FileStatus = 3
+	ModLoaderTypeFabric     FileStatus = 4
+	ModLoaderTypeQuilt      FileStatus = 5
 )
 
 type ApiResponseOfListOfMinecraftGameVersion struct {

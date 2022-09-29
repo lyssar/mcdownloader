@@ -5,26 +5,26 @@ type ApiUri string
 type CoreApiStatus int
 
 const (
-	CORE_API_STATUS_PRIVATE CoreApiStatus = 1
-	CORE_API_STATUS_PUBLIC  CoreApiStatus = 2
+	CoreApiStatusPrivate CoreApiStatus = 1
+	CoreApiStatusPublic  CoreApiStatus = 2
 )
 
 type CoreStatus int
 
 const (
-	CORE_STATUS_DRAFT          CoreStatus = 1
-	CORE_STATUS_TEST           CoreStatus = 2
-	CORE_STATUS_PENDING_REVIEW CoreStatus = 3
-	CORE_STATUS_REJECTED       CoreStatus = 4
-	CORE_STATUS_APPROVED       CoreStatus = 5
-	CORE_STATUS_LIVE           CoreStatus = 6
+	CoreStatusDraft         CoreStatus = 1
+	CoreStatusTest          CoreStatus = 2
+	CoreStatusPendingReview CoreStatus = 3
+	CoreStatusRejected      CoreStatus = 4
+	CoreStatusApproved      CoreStatus = 5
+	CoreStatusLive          CoreStatus = 6
 )
 
 type HashAlgo int
 
 const (
-	HASH_ALGO_SHA1 HashAlgo = 1
-	HASH_ALGO_MD5  HashAlgo = 2
+	HashAlgoSha1 HashAlgo = 1
+	HashAlgoMd5  HashAlgo = 2
 )
 
 type Pagination struct {

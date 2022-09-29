@@ -5,36 +5,36 @@ import "time"
 type ModStatus int
 
 const (
-	MOD_STATUS_NEW               ModStatus = 1
-	MOD_STATUS_CHANGES_REQUIRED  ModStatus = 2
-	MOD_STATUS_UNDER_SOFT_REVIEW ModStatus = 3
-	MOD_STATUS_APPROVED          ModStatus = 4
-	MOD_STATUS_REJECTED          ModStatus = 5
-	MOD_STATUS_CHANGES_MADE      ModStatus = 6
-	MOD_STATUS_INACTIVE          ModStatus = 7
-	MOD_STATUS_ABANDONED         ModStatus = 8
-	MOD_STATUS_DELETED           ModStatus = 9
-	MOD_STATUS_UNDER_REVIEW      ModStatus = 10
+	ModStatusNew             ModStatus = 1
+	ModStatusChangesRequired ModStatus = 2
+	ModStatusUnderSoftReview ModStatus = 3
+	ModStatusApproved        ModStatus = 4
+	ModStatusRejected        ModStatus = 5
+	ModStatusChangesMade     ModStatus = 6
+	ModStatusInactive        ModStatus = 7
+	ModStatusAbandoned       ModStatus = 8
+	ModStatusDeleted         ModStatus = 9
+	ModStatusUnderReview     ModStatus = 10
 )
 
 type ModsSearchSortField int
 
 const (
-	FILE_STATUS_FEATURED        FileStatus = 1
-	FILE_STATUS_POPULARITY      FileStatus = 2
-	FILE_STATUS_LAST_UPDATED    FileStatus = 3
-	FILE_STATUS_NAME            FileStatus = 4
-	FILE_STATUS_AUTHOR          FileStatus = 5
-	FILE_STATUS_TOTAL_DOWNLOADS FileStatus = 6
-	FILE_STATUS_CATEGORY        FileStatus = 7
-	FILE_STATUS_GAME_VERSION    FileStatus = 8
+	ModSearchSortFieldFeatured       ModsSearchSortField = 1
+	ModSearchSortFieldPopularity     ModsSearchSortField = 2
+	ModSearchSortFieldLastUpdated    ModsSearchSortField = 3
+	ModSearchSortFieldName           ModsSearchSortField = 4
+	ModSearchSortFieldAuthor         ModsSearchSortField = 5
+	ModSearchSortFieldTotalDownloads ModsSearchSortField = 6
+	ModSearchSortFieldCategory       ModsSearchSortField = 7
+	ModSearchSortFieldGameVersion    ModsSearchSortField = 8
 )
 
 type SortOrder string
 
 const (
-	SORT_ORDER_ASC  SortOrder = "asc"
-	SORT_ORDER_DESC SortOrder = "asc"
+	SortOrderAsc  SortOrder = "asc"
+	SortOrderDesc SortOrder = "desc"
 )
 
 type FeaturedModsResponse struct {

@@ -5,40 +5,40 @@ import "time"
 type FileRelationType int
 
 const (
-	FILE_RELATION_TYPE_EMBEDDED_LIBRARY    FileRelationType = 1
-	FILE_RELATION_TYPE_OPTIONAL_DEPENDENCY FileRelationType = 2
-	FILE_RELATION_TYPE_REQUIRED_DEPENDENCY FileRelationType = 3
-	FILE_RELATION_TYPE_TOOL                FileRelationType = 4
-	FILE_RELATION_TYPE_INCOMPATIBLE        FileRelationType = 5
-	FILE_RELATION_TYPE_INCLUDE             FileRelationType = 6
+	FileRelationTypeEmbeddedLibrary    FileRelationType = 1
+	FileRelationTypeOptionalDependency FileRelationType = 2
+	FileRelationTypeRequiredDependency FileRelationType = 3
+	FileRelationTypeTool               FileRelationType = 4
+	FileRelationTypeIncompatible       FileRelationType = 5
+	FileRelationTypeInclude            FileRelationType = 6
 )
 
 type FileReleaseType int
 
 const (
-	FILE_RELEASE_TYPE_RELEASE FileReleaseType = 1
-	FILE_RELEASE_TYPE_BETA    FileReleaseType = 2
-	FILE_RELEASE_TYPE_ALPHA   FileReleaseType = 3
+	FileReleaseTypeRelease FileReleaseType = 1
+	FileReleaseTypeBeta    FileReleaseType = 2
+	FileReleaseTypeAlpha   FileReleaseType = 3
 )
 
 type FileStatus int
 
 const (
-	FILE_STATUS_PROCESSING          FileStatus = 1
-	FILE_STATUS_CHANGES_REQUIRED    FileStatus = 2
-	FILE_STATUS_UNDER_REVIEW        FileStatus = 3
-	FILE_STATUS_APPROVED            FileStatus = 4
-	FILE_STATUS_REJECTED            FileStatus = 5
-	FILE_STATUS_MALWARE_DETECTED    FileStatus = 6
-	FILE_STATUS_DELETED             FileStatus = 7
-	FILE_STATUS_ARCHIVED            FileStatus = 8
-	FILE_STATUS_TESTING             FileStatus = 9
-	FILE_STATUS_RELEASED            FileStatus = 10
-	FILE_STATUS_READY_FOR_REVIEW    FileStatus = 11
-	FILE_STATUS_DEPRECATED          FileStatus = 12
-	FILE_STATUS_BAKING              FileStatus = 13
-	FILE_STATUS_AWAITING_PUBLISHING FileStatus = 14
-	FILE_STATUS_FAILED_PUBLISHING   FileStatus = 15
+	FileStatusProcessing         FileStatus = 1
+	FileStatusChangesRequired    FileStatus = 2
+	FileStatusUnderReview        FileStatus = 3
+	FileStatusApproved           FileStatus = 4
+	FileStatusRejected           FileStatus = 5
+	FileStatusMalwareDetected    FileStatus = 6
+	FileStatusDeleted            FileStatus = 7
+	FileStatusArchived           FileStatus = 8
+	FileStatusTesting            FileStatus = 9
+	FileStatusReleased           FileStatus = 10
+	FileStatusReadyForReview     FileStatus = 11
+	FileStatusDeprecated         FileStatus = 12
+	FileStatusBaking             FileStatus = 13
+	FileStatusAwaitingPublishing FileStatus = 14
+	FileStatusFailedPublishing   FileStatus = 15
 )
 
 type SortableGameVersion struct {

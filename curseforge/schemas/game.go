@@ -5,16 +5,16 @@ import "time"
 type GameVersionStatus int
 
 const (
-	GAME_VERSION_STATUS_APPROVED GameVersionStatus = 1
-	GAME_VERSION_STATUS_DELETED  GameVersionStatus = 2
-	GAME_VERSION_STATUS_NEW      GameVersionStatus = 3
+	GameVersionStatusApproved GameVersionStatus = 1
+	GameVersionStatusDeleted  GameVersionStatus = 2
+	GameVersionStatusNew      GameVersionStatus = 3
 )
 
 type GameVersionTypeStatus int
 
 const (
-	GAME_VERSION_TYPE_STATUS_NORMAL  GameVersionTypeStatus = 1
-	GAME_VERSION_TYPE_STATUS_DELETED GameVersionTypeStatus = 2
+	GameVersionTypeStatusNormal  GameVersionTypeStatus = 1
+	GameVersionTypeStatusDeleted GameVersionTypeStatus = 2
 )
 
 type GameAssets struct {
