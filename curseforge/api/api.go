@@ -17,8 +17,9 @@ type CurseforgeApiConfig struct {
 
 func (api CurseforgeApi) clientHeader() CurseforgeClientHeader {
 	defaults := CurseforgeClientHeader{
-		"Accept":    []string{"application/json"},
-		"x-api-key": []string{api.Config.ApiKey},
+		"Content-Type": []string{"application/json"},
+		"Accept":       []string{"application/json"},
+		"x-api-key":    []string{api.Config.ApiKey},
 	}
 	if api.Config.AdditionalHeader != nil {
 		return defaults.Add(api.Config.AdditionalHeader)
