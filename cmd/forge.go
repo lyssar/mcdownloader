@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/lyssar/msdcli/curseforge"
 	"github.com/lyssar/msdcli/curseforge/api"
 	"github.com/lyssar/msdcli/utils"
 	"github.com/spf13/cobra"
@@ -15,10 +16,17 @@ var forgeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("forge called")
 		config := utils.GetConfig()
-		versions, err := api.GetVersions(config.CurseForge.MinecraftGameID)
+		apiConfig := api.CurseforgeApiConfig{
+			BaseUrlProtocol: config.CurseForge.BaseUrlProtocol,
+			BaseUrl:         config.CurseForge.BaseUrl,
+			ApiKey:          config.CurseForge.ApiKey,
+		}
+
+		curseforgeApi := curseforge.NewCurseforgeApi(apiConfig)
+		versions, err := curseforgeApi.GetVersions(config.CurseForge.MinecraftGameID)
 		cobra.CheckErr(err)
 		fmt.Println("GetGame:")
-		fmt.Println(versions)
+		fmt.Printf("%#v", versions)
 	},
 }
 
