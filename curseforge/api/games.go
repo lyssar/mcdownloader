@@ -19,10 +19,16 @@ const (
 )
 
 // GetGames @see https://docs.curseforge.com/?go#get-games
-func (api CurseforgeApi) GetGames(index int, pageSize int) (response schemas.GetGamesResponse, err error) {
+func (api CurseforgeApi) GetGames(index *int, pageSize *int) (response schemas.GetGamesResponse, err error) {
 	q := url.Values{}
-	q.Add("index", strconv.Itoa(index))
-	q.Add("pageSize", strconv.Itoa(pageSize))
+
+	if index != nil {
+		q.Add("index", strconv.Itoa(*index))
+	}
+
+	if pageSize != nil {
+		q.Add("pageSize", strconv.Itoa(*pageSize))
+	}
 
 	client := api.newCurseforgeClientForRoute(string(UriGames))
 	client.Query(&q)

@@ -10,13 +10,13 @@ import (
 
 type CurseforgeClientHeader map[string][]string
 
-func (header CurseforgeClientHeader) Add(addtionalHeader *CurseforgeClientHeader) CurseforgeClientHeader {
+func (header CurseforgeClientHeader) Add(additionalClientHeader *CurseforgeClientHeader) CurseforgeClientHeader {
 	var newHeader CurseforgeClientHeader
-	additionalMarchaled, _ := json.Marshal(addtionalHeader)
+	additionalClientHeaderEncoded, _ := json.Marshal(additionalClientHeader)
 	headerMarshaled, _ := json.Marshal(header)
 
 	_ = json.Unmarshal(headerMarshaled, &newHeader)
-	_ = json.Unmarshal(headerMarshaled, &additionalMarchaled)
+	_ = json.Unmarshal(headerMarshaled, &additionalClientHeaderEncoded)
 
 	return newHeader
 }
@@ -31,12 +31,6 @@ type CurseforgeClient struct {
 	bodyData    *io.Reader
 	response    *http.Response
 	requestErr  error
-}
-
-var defaultBaseURL = url.URL{
-	Scheme: "https",
-	Host:   "api.curseforge.com",
-	Path:   "",
 }
 
 // newCurseforgeClientForRoute returns a new client that calls uri.
