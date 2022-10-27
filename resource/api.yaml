@@ -3,3 +3,7 @@ curseforge:
     baseUrl: api.curseforge.com
     apiKey: $2a$10$fvytTHoBe7vTxPAUTMAoSOBZjfeWqcCMzXuc0mf3kdZyBd5Htr8Em
     minecraftGameID: 432
+minecraftVersion: ""
+forgeVersion: ""
+minecraft:
+    metajson: https://launchermeta.mojang.com/mc/game/version_manifest.json
