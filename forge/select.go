@@ -1,9 +1,10 @@
-package minecraft
+package forge
 
 import (
-	"fmt"
 	"github.com/chzyer/readline"
+	forgeVersionApi "github.com/kleister/go-forge/version"
 	"github.com/manifoldco/promptui"
+	"github.com/spf13/cobra"
 	"strings"
 )
 
@@ -22,17 +23,16 @@ func (n *noBellStdout) Close() error {
 
 var NoBellStdout = &noBellStdout{}
 
-func (metaApi *MetaApi) RenderSelect() (Version, error) {
-
+func RenderSelect(versions forgeVersionApi.Versions) (*forgeVersionApi.Version, error) {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "\U0001F32E {{ .ID | cyan }} ({{ .Type | red }})",
-		Inactive: "  {{ .ID | cyan }} ({{ .Type | red }})",
+		Active:   "\U0001F32E {{ .ID | cyan }} (mc {{ .Minecraft | red }})",
+		Inactive: "  {{ .ID | cyan }} (mc {{ .Minecraft | red }})",
 		Selected: "\U0001F32E {{ .ID | red | cyan }}",
 	}
 
 	searcher := func(input string, index int) bool {
-		versions := metaApi.Versions.Versions[index]
+		versions := versions[index]
 		name := strings.Replace(strings.ToLower(versions.ID), " ", "", -1)
 		input = strings.Replace(strings.ToLower(input), " ", "", -1)
 
@@ -41,8 +41,8 @@ func (metaApi *MetaApi) RenderSelect() (Version, error) {
 
 	prompt := promptui.Select{
 		Stdout:    NoBellStdout,
-		Label:     "Select minecraft version",
-		Items:     metaApi.Versions.Versions,
+		Label:     "Select forge version",
+		Items:     versions,
 		Templates: templates,
 		Size:      4,
 		Searcher:  searcher,
@@ -50,10 +50,7 @@ func (metaApi *MetaApi) RenderSelect() (Version, error) {
 
 	i, _, err := prompt.Run()
 
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		return nil, err
-	}
+	cobra.CheckErr(err)
 
-	return metaApi.Versions.Versions[i], nil
+	return &versions[i], nil
 }

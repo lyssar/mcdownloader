@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	forgeVersionApi "github.com/kleister/go-forge/version"
 	"github.com/lyssar/msdcli/curseforge/api"
+	"github.com/lyssar/msdcli/forge"
 	"github.com/lyssar/msdcli/minecraft"
 	"github.com/lyssar/msdcli/utils"
 	"github.com/spf13/cobra"
@@ -20,49 +23,42 @@ var forgeCmd = &cobra.Command{
 		minecraftMetaApi := minecraft.NewMinecraftMetaApi(config.Minecraft.MetaJson)
 		minecraftMetaApi.LoadJson()
 
-		var selectedVersion minecraft.Version
+		var selectedMinecraftVersion minecraft.Version
+		var err error
 
-		// when minecraft version not present
 		if config.MinecraftVersion == "" {
-			selectedVersion, err := minecraftMetaApi.RenderSelect()
+			selectedMinecraftVersion, err = minecraftMetaApi.RenderSelect()
 			cobra.CheckErr(err)
-			fmt.Printf("%#v", selectedVersion)
 		} else {
 			filter := minecraft.Filter{Minecraft: config.MinecraftVersion}
 			foundVersions := minecraftMetaApi.Filter(&filter)
 			if len(foundVersions) == 0 {
-				selectedVersion, err := minecraftMetaApi.RenderSelect()
-				cobra.CheckErr(err)
-				fmt.Printf("%#v", selectedVersion)
+				cobra.CheckErr(
+					errors.New(fmt.Sprintf("No minecraft version found for %s", config.MinecraftVersion)),
+				)
 			} else {
-				selectedVersion = foundVersions[0]
+				selectedMinecraftVersion = foundVersions[0]
 			}
 		}
 
-		fmt.Printf("%#v", selectedVersion.ID)
+		var selectedForgeVersion *forgeVersionApi.Version
 
-		// when forge version no present
-		//		Get Forge Version List for MC Version
-		//		Make Selection
-		// Download Forge server setup
+		if config.ForgeVersion == "" {
+			forgeVersionList := forge.FetchForgeVersionByMinecraftVersion(selectedMinecraftVersion.ID)
+			selectedForgeVersion, err = forge.RenderSelect(forgeVersionList)
+		} else {
+			forgeVersionList := forge.FetchForgeVersionByMinecraftAndForgeVersion(config.ForgeVersion, selectedMinecraftVersion.ID)
+			if len(forgeVersionList) == 0 {
+				cobra.CheckErr(
+					errors.New(fmt.Sprintf("No forge package found for %s", config.ForgeVersion)),
+				)
+			}
+			selectedForgeVersion, err = forge.RenderSelect(forgeVersionList)
+			cobra.CheckErr(err)
+		}
 
-		//config := utils.GetConfig()
-		//curseforgeApi := curseforge.NewCurseforgeApi(getApiConfig(config))
-
-		// versions, err := curseforgeApi.GetVersions(config.CurseForge.MinecraftGameID)
-		// cobra.CheckErr(err)
-
-		// Get filtere forge list by MC Version
-		//forge, err := version.FromDefault()
-		//cobra.CheckErr(err)
-		//f := &version.Filter{
-		//	Minecraft: "1.16.5",
-		//}
-		//for _, version := range forge.Filter( f) {
-		//	fmt.Println(version.Minecraft)
-		//}
-
-		// fmt.Printf("%#v", forge.Releases.Filter(f))
+		fmt.Printf("%#v", selectedMinecraftVersion)
+		fmt.Printf("%#v", selectedForgeVersion)
 	},
 }
 
