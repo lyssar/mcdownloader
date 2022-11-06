@@ -14,11 +14,13 @@ type Config struct {
 		ApiKey          string `yaml:"apiKey"`
 		MinecraftGameID int    `yaml:"minecraftGameID"`
 	} `yaml:"curseforge"`
-	MinecraftVersion string `yaml:"minecraftVersion"`
-	ForgeVersion     string `yaml:"forgeVersion"`
-	Minecraft        struct {
-		MetaJson string `yaml:"metajson"`
-	} `yaml:"minecraft"`
+	MinecraftVersion string          `yaml:"minecraftVersion"`
+	ForgeVersion     string          `yaml:"forgeVersion"`
+	Minecraft        MinecraftConfig `yaml:"minecraft"`
+}
+
+type MinecraftConfig struct {
+	MetaJson string `yaml:"metajson"`
 }
 
 var loadedConfig *Config

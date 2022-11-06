@@ -2,6 +2,8 @@ package minecraft
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/mcuadros/go-version"
 	"github.com/spf13/cobra"
 	"io"
@@ -73,4 +75,27 @@ func (metaApi *MetaApi) Filter(filter *Filter) []Version {
 	}
 
 	return result
+}
+
+func (metaApi *MetaApi) FindMinecraftVersion(selectedVersion string) (Version, error) {
+	metaApi.LoadJson()
+
+	var selectedMinecraftVersion Version
+	var err error
+
+	if selectedVersion == "" {
+		selectedMinecraftVersion, err = metaApi.RenderSelect()
+		cobra.CheckErr(err)
+	} else {
+		filter := Filter{Minecraft: selectedVersion}
+		foundVersions := metaApi.Filter(&filter)
+		if len(foundVersions) == 0 {
+			cobra.CheckErr(
+				errors.New(fmt.Sprintf("No minecraft version found for %s", selectedVersion)),
+			)
+		} else {
+			selectedMinecraftVersion = foundVersions[0]
+		}
+	}
+	return selectedMinecraftVersion, err
 }
