@@ -3,6 +3,7 @@ package forge
 import (
 	"github.com/chzyer/readline"
 	forgeVersionApi "github.com/kleister/go-forge/version"
+	"github.com/lyssar/msdcli/utils"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"strings"
@@ -21,14 +22,12 @@ func (n *noBellStdout) Close() error {
 	return readline.Stdout.Close()
 }
 
-var NoBellStdout = &noBellStdout{}
-
 func RenderSelect(versions forgeVersionApi.Versions) (*forgeVersionApi.Version, error) {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "\U0001F32E {{ .ID | cyan }} (mc {{ .Minecraft | red }})",
-		Inactive: "  {{ .ID | cyan }} (mc {{ .Minecraft | red }})",
-		Selected: "\U0001F32E {{ .ID | red | cyan }}",
+		Active:   "\U0001F32E {{ .ID | cyan }} (mc {{ .Minecraft | yellow }})",
+		Inactive: "  {{ .ID | black }} (mc {{ .Minecraft | black }})",
+		Selected: "{{ \"\u2771 Selected: \" | yellow }} {{ .ID | yellow | bold }}",
 	}
 
 	searcher := func(input string, index int) bool {
@@ -39,8 +38,9 @@ func RenderSelect(versions forgeVersionApi.Versions) (*forgeVersionApi.Version, 
 		return strings.Contains(name, input)
 	}
 
+	noBell := utils.NewNoBellStdout()
 	prompt := promptui.Select{
-		Stdout:    NoBellStdout,
+		Stdout:    &noBell,
 		Label:     "Select forge version",
 		Items:     versions,
 		Templates: templates,

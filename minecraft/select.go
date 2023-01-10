@@ -2,33 +2,18 @@ package minecraft
 
 import (
 	"fmt"
-	"github.com/chzyer/readline"
+	"github.com/lyssar/msdcli/utils"
 	"github.com/manifoldco/promptui"
 	"strings"
 )
 
-type noBellStdout struct{}
-
-func (n *noBellStdout) Write(p []byte) (int, error) {
-	if len(p) == 1 && p[0] == readline.CharBell {
-		return 0, nil
-	}
-	return readline.Stdout.Write(p)
-}
-
-func (n *noBellStdout) Close() error {
-	return readline.Stdout.Close()
-}
-
-var NoBellStdout = &noBellStdout{}
-
-func (metaApi *MetaApi) RenderSelect() (Version, error) {
+func (metaApi *MetaApi) RenderSelect(showAll bool) (Version, error) {
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "\U0001F32E {{ .ID | cyan }} ({{ .Type | red }})",
-		Inactive: "  {{ .ID | cyan }} ({{ .Type | red }})",
-		Selected: "\U0001F32E {{ .ID | red | cyan }}",
+		Active:   "\U0001F32E {{ .ID | cyan }} ({{ .Type | yellow }})",
+		Inactive: "  {{ .ID | black }} ({{ .Type | black }})",
+		Selected: "{{ \"\u2771 Selected: \" | yellow }} {{ .ID | yellow | bold }}",
 	}
 
 	searcher := func(input string, index int) bool {
@@ -39,10 +24,15 @@ func (metaApi *MetaApi) RenderSelect() (Version, error) {
 		return strings.Contains(name, input)
 	}
 
+	noBell := utils.NewNoBellStdout()
+	listItems := metaApi.Versions.GetVersionsForType("release")
+	if showAll {
+		listItems = metaApi.Versions.Versions
+	}
 	prompt := promptui.Select{
-		Stdout:    NoBellStdout,
+		Stdout:    &noBell,
 		Label:     "Select minecraft version",
-		Items:     metaApi.Versions.Versions,
+		Items:     listItems,
 		Templates: templates,
 		Size:      4,
 		Searcher:  searcher,
@@ -52,7 +42,7 @@ func (metaApi *MetaApi) RenderSelect() (Version, error) {
 
 	if err != nil {
 		fmt.Printf("Prompt failed %v\n", err)
-		return nil, err
+		return Version{}, err
 	}
 
 	return metaApi.Versions.Versions[i], nil

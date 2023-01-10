@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	forgeVersionApi "github.com/kleister/go-forge/version"
+	"github.com/lyssar/msdcli/utils"
 	"github.com/spf13/cobra"
 	"sort"
 )
@@ -70,6 +71,7 @@ func (api ForgeApi) reverseSortVersionList(forgeVersionList forgeVersionApi.Vers
 }
 
 func (api ForgeApi) SelectForgeVersion(forgeVersionString string, minecraftVersionString string) (*forgeVersionApi.Version, error) {
+	utils.PrintInfo("Choosing forge version")
 	var selectedForgeVersion *forgeVersionApi.Version
 	var err error
 
