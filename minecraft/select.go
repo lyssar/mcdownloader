@@ -1,7 +1,6 @@
 package minecraft
 
 import (
-	"fmt"
 	"github.com/lyssar/msdcli/utils"
 	"github.com/manifoldco/promptui"
 	"strings"
@@ -11,7 +10,7 @@ func (metaApi *MetaApi) RenderSelect(showAll bool) (Version, error) {
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "\U0001F32E {{ .ID | cyan }} ({{ .Type | yellow }})",
+		Active:   "\U0000279C {{ .ID | cyan }} ({{ .Type | yellow }})",
 		Inactive: "  {{ .ID | black }} ({{ .Type | black }})",
 		Selected: "{{ \"\u2771 Selected: \" | yellow }} {{ .ID | yellow | bold }}",
 	}
@@ -41,9 +40,8 @@ func (metaApi *MetaApi) RenderSelect(showAll bool) (Version, error) {
 	i, _, err := prompt.Run()
 
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return Version{}, err
 	}
 
-	return metaApi.Versions.Versions[i], nil
+	return listItems[i], nil
 }

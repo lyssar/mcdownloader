@@ -1,10 +1,10 @@
-package utils
+package config
 
 import (
 	"bytes"
+	_ "embed"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
 )
 
 type Config struct {
@@ -25,6 +25,9 @@ type MinecraftConfig struct {
 
 var loadedConfig *Config
 
+//go:embed resource/api.yaml
+var apiResource []byte
+
 func GetConfig() *Config {
 	if loadedConfig == nil {
 		_, err := LoadConfig()
@@ -34,11 +37,10 @@ func GetConfig() *Config {
 }
 
 func LoadConfig() (config *Config, err error) {
-	var configData, _ = ioutil.ReadFile("resource/api.yaml")
 	viper.SetConfigType("yaml")
 	viper.AutomaticEnv()
 
-	err = viper.ReadConfig(bytes.NewBuffer(configData))
+	err = viper.ReadConfig(bytes.NewBuffer(apiResource))
 	cobra.CheckErr(err)
 
 	err = viper.Unmarshal(&config)

@@ -5,7 +5,6 @@ import (
 	forgeVersionApi "github.com/kleister/go-forge/version"
 	"github.com/lyssar/msdcli/utils"
 	"github.com/manifoldco/promptui"
-	"github.com/spf13/cobra"
 	"strings"
 )
 
@@ -50,7 +49,5 @@ func RenderSelect(versions forgeVersionApi.Versions) (*forgeVersionApi.Version, 
 
 	i, _, err := prompt.Run()
 
-	cobra.CheckErr(err)
-
-	return &versions[i], nil
+	return &versions[i], err
 }

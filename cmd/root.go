@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"github.com/lyssar/msdcli/utils"
+	"github.com/lyssar/msdcli/config"
+	"github.com/spf13/viper"
 	"os"
 
 	cc "github.com/ivanpirog/coloredcobra"
@@ -38,9 +39,12 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+
+	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Forcing the log level to debug")
+	_ = viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 }
 
 func initConfig() {
-	_, err := utils.LoadConfig()
+	_, err := config.LoadConfig()
 	cobra.CheckErr(err)
 }

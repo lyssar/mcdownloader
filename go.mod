@@ -12,6 +12,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mcuadros/go-version v0.0.0-20190830083331-035f6764e8d2
 	github.com/schollz/progressbar/v3 v3.12.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.12.0
 )

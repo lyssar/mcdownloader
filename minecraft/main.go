@@ -2,12 +2,11 @@ package minecraft
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/gookit/color"
+	"github.com/lyssar/msdcli/errors"
+	"github.com/lyssar/msdcli/logger"
 	"github.com/lyssar/msdcli/utils"
 	"github.com/mcuadros/go-version"
-	"github.com/spf13/cobra"
 	"io"
 	"net/http"
 	"os"
@@ -139,17 +138,18 @@ func NewMinecraftMetaApi(apiJSONUri string) MetaApi {
 }
 
 func (metaApi *MetaApi) LoadJson() {
-	utils.PrintInfo("Loading minecraft meta data")
+	logger.Info("Loading minecraft meta data")
 	//get the data from the url
+	logger.Debug(metaApi.ApiJSONUri)
 	res, err := http.Get(metaApi.ApiJSONUri)
 	//error handling
 	defer res.Body.Close()
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 
 	var versionsList Versions
 	jsonBytes, _ := io.ReadAll(res.Body)
 	err = json.Unmarshal([]byte(jsonBytes), &versionsList)
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 	metaApi.Versions = versionsList
 }
 
@@ -171,28 +171,25 @@ func (metaApi *MetaApi) Filter(filter *Filter) []Version {
 	return result
 }
 
-func (metaApi *MetaApi) FindMinecraftVersion(selectedVersion string) (Version, error) {
-	utils.PrintInfo("Choosing minecraft version")
+func (metaApi *MetaApi) FindMinecraftVersion(selectedVersion string) (*Version, *errors.ApplicationError) {
+	logger.Info("Choosing minecraft version")
 	metaApi.LoadJson()
-
-	var selectedMinecraftVersion Version
-	var err error
-
 	if selectedVersion == "" {
-		selectedMinecraftVersion, err = metaApi.RenderSelect(false)
-		cobra.CheckErr(err)
+		selectedMinecraftVersion, err := metaApi.RenderSelect(false)
+		if err != nil {
+			return nil, errors.NewError(err.Error())
+		}
+		return &selectedMinecraftVersion, nil
 	} else {
 		filter := Filter{Minecraft: selectedVersion}
 		foundVersions := metaApi.Filter(&filter)
 		if len(foundVersions) == 0 {
-			cobra.CheckErr(
-				errors.New(color.Error.Sprintf("No minecraft version found for %s", selectedVersion)),
-			)
+			return nil, errors.NewError(fmt.Sprintf("No minecraft version found for %s", selectedVersion))
 		} else {
-			selectedMinecraftVersion = foundVersions[0]
+			selectedMinecraftVersion := foundVersions[0]
+			return &selectedMinecraftVersion, nil
 		}
 	}
-	return selectedMinecraftVersion, err
 }
 
 func (versionMeta Version) DownloadRelease() McRelease {
@@ -202,7 +199,7 @@ func (versionMeta Version) DownloadRelease() McRelease {
 	defer resp.Body.Close()
 
 	responseData, err := io.ReadAll(resp.Body)
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 
 	_ = json.Unmarshal([]byte(responseData), &mcRelease)
 
@@ -211,23 +208,23 @@ func (versionMeta Version) DownloadRelease() McRelease {
 
 func (r McRelease) DownloadServer() bool {
 	workingDir, err := os.Getwd()
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 	utils.DownloadFile(r.Downloads.Server.URL, "server.jar", workingDir)
 	return true
 }
 
 func (r McRelease) InstallServer() {
 	pwd, err := os.Getwd()
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 
 	srvPath := fmt.Sprintf("%s/server.jar", pwd)
 	_, err = os.Stat(srvPath)
 
 	if os.IsNotExist(err) {
-		cobra.CheckErr(err)
+		errors.CheckStandardErr(err)
 	}
 
 	cmd := exec.Command("java", "-Xms2048M", "-Xmx2048M", "-jar", srvPath, "nogui")
 	err = cmd.Start()
-	cobra.CheckErr(err)
+	errors.CheckStandardErr(err)
 }

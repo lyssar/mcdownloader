@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/lyssar/msdcli/config"
 	"github.com/lyssar/msdcli/curseforge/api"
 	"github.com/lyssar/msdcli/forge"
-	"github.com/lyssar/msdcli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,7 +15,7 @@ var forgeCmd = &cobra.Command{
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
 		// check args
-		config := utils.GetConfig()
+		config := config.GetConfig()
 		forge.CreateServer(config)
 	},
 }
@@ -29,7 +29,7 @@ func init() {
 	_ = viper.BindPFlag("ForgeVersion", forgeCmd.PersistentFlags().Lookup("forge-version"))
 }
 
-func getApiConfig(config *utils.Config) api.CurseforgeApiConfig {
+func getApiConfig(config *config.Config) api.CurseforgeApiConfig {
 	return api.CurseforgeApiConfig{
 		BaseUrlProtocol: config.CurseForge.BaseUrlProtocol,
 		BaseUrl:         config.CurseForge.BaseUrl,

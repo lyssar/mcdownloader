@@ -1,36 +1,31 @@
 package forge
 
 import (
-	"errors"
 	"fmt"
-	"github.com/gookit/color"
 	"github.com/hashicorp/go-version"
-	forgeVersionApi "github.com/kleister/go-forge/version"
+	"github.com/lyssar/msdcli/config"
+	"github.com/lyssar/msdcli/errors"
+	"github.com/lyssar/msdcli/logger"
 	"github.com/lyssar/msdcli/minecraft"
-	"github.com/lyssar/msdcli/utils"
-	"github.com/spf13/cobra"
 	"os/exec"
 	"regexp"
 	"strconv"
 )
 
-func CreateServer(config *utils.Config) {
-	utils.PrintInfo("Creating forge server.")
+func CreateServer(config *config.Config) {
+	logger.Info("Start creating forge server.")
 	minecraftMetaApi := minecraft.NewMinecraftMetaApi(config.Minecraft.MetaJson)
 	selectedMinecraftVersion, err := minecraftMetaApi.FindMinecraftVersion(config.MinecraftVersion)
-	cobra.CheckErr(err)
+	errors.Check(err)
 
 	forgeApp := NewForgeClient()
 
-	var selectedForgeVersion *forgeVersionApi.Version
-	selectedForgeVersion, err = forgeApp.SelectForgeVersion(config.ForgeVersion, selectedMinecraftVersion.ID)
-	cobra.CheckErr(err)
-
-	fmt.Println(selectedForgeVersion.URL)
+	selectedForgeVersion, err := forgeApp.SelectForgeVersion(config.ForgeVersion, selectedMinecraftVersion.ID)
+	errors.Check(err)
 
 	mcRelease := selectedMinecraftVersion.DownloadRelease()
 	_, err = checkJavaVersion(mcRelease)
-	cobra.CheckErr(err)
+	errors.Check(err)
 
 	// Download server jar
 	if mcRelease.DownloadServer() {
@@ -38,39 +33,49 @@ func CreateServer(config *utils.Config) {
 		mcRelease.InstallServer()
 	}
 
-	fmt.Println("== FORGE ===============================================")
-	fmt.Println(mcRelease.Downloads.Server.URL)
+	logger.Debug("== FORGE ===============================================")
+	logger.Debug(selectedForgeVersion.URL)
+	logger.Debug(mcRelease.Downloads.Server.URL)
 	// Download forge
 	// Run and setup once
 }
 
-func checkJavaVersion(mcRelease minecraft.McRelease) (bool, error) {
+func checkJavaVersion(mcRelease minecraft.McRelease) (bool, *errors.ApplicationError) {
 	cmdPrep := "java --version"
 	cmdOutput, _ := exec.Command("bash", "-c", cmdPrep).CombinedOutput()
 
-	utils.PrintInfo("Check host java version.")
+	logger.Info("Checking host java version.")
+	logger.Debug("Using java --version")
 	versionRegex := regexp.MustCompile(`^.*\s(\d+).\d+\.\d+`)
 	completeVersionStringRegex := regexp.MustCompile(`^.*\s(\d+.\d+\.\d+)`)
 	matches := versionRegex.FindStringSubmatch(string(cmdOutput))
 	completeStringMatches := completeVersionStringRegex.FindStringSubmatch(string(cmdOutput))
+
 	if len(matches) > 0 {
-		utils.PrintInfo("Host java version found.")
+		logger.Debug("Host java version found.")
 		javaVersion := string(matches[1])
 		completeJavaVersion := string(completeStringMatches[1])
 		majorVersion := strconv.Itoa(mcRelease.JavaVersion.MajorVersion)
 
 		releaseMajorVersion, err := version.NewVersion(majorVersion)
-		cobra.CheckErr(err)
+		if err != nil {
+			return false, errors.NewError(err.Error())
+		}
 
 		hostJavaVersion, err := version.NewVersion(javaVersion)
-		cobra.CheckErr(err)
+		if err != nil {
+			return false, errors.NewError(err.Error())
+		}
 
 		if !hostJavaVersion.Equal(releaseMajorVersion) {
-			return false, errors.New(color.Error.Sprintf("Java version %s found, expected %s.x.x. Please install the correct java version", completeJavaVersion, majorVersion))
+			err := errors.NewWarning(fmt.Sprintf("Java version %s found, expected %s.x.x. Please install the correct java version", completeJavaVersion, majorVersion))
+			return false, err
 		}
 	} else {
+		logger.Debug(fmt.Sprintf("Return of check command: %s", string(cmdOutput)))
 		majorVersion := strconv.Itoa(mcRelease.JavaVersion.MajorVersion)
-		return false, errors.New(color.Error.Sprintf("Couldn't find any java version. Please install java %s", majorVersion))
+		err := errors.NewFatal(fmt.Sprintf("Couldn't find any java version. Please install java %s", majorVersion))
+		return false, err
 	}
 
 	return true, nil

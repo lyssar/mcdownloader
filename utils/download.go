@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/gookit/color"
+	"github.com/lyssar/msdcli/logger"
 	"github.com/schollz/progressbar/v3"
 	"io"
 	"net/http"
@@ -24,5 +25,5 @@ func DownloadFile(url string, outputName string, path string) {
 	)
 	io.Copy(io.MultiWriter(f, bar), resp.Body)
 
-	color.Success.Println("Download successful.")
+	logger.Success("Download successful.")
 }
