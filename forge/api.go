@@ -5,25 +5,29 @@ import (
 	forgeVersionApi "github.com/kleister/go-forge/version"
 	"github.com/lyssar/msdcli/errors"
 	"github.com/lyssar/msdcli/logger"
+	"github.com/lyssar/msdcli/utils"
 	"github.com/spf13/cobra"
+	"os"
+	"os/exec"
 	"sort"
+	"strings"
 )
 
 type ForgeApi struct {
-	forgeVersionList forgeVersionApi.Response
-	ForgeVersion     string
-	MinecraftVersion string
+	forgeVersionList     forgeVersionApi.Response
+	SelectedForgeVersion *forgeVersionApi.Version
+	MinecraftVersion     string
 }
 
-func NewForgeClient() ForgeApi {
+func NewForgeClient() *ForgeApi {
 	forgeResultSet, err := forgeVersionApi.FromDefault()
 	cobra.CheckErr(err)
-	return ForgeApi{
+	return &ForgeApi{
 		forgeVersionList: forgeResultSet,
 	}
 }
 
-func (api ForgeApi) VerifyForgeVersion(forgeVersion forgeVersionApi.Version, minecraftVersionString string) (*bool, error) {
+func (api *ForgeApi) verifyForgeVersion(forgeVersion forgeVersionApi.Version, minecraftVersionString string) (*bool, error) {
 	ok := true
 
 	if forgeVersion.Minecraft != minecraftVersionString {
@@ -42,17 +46,17 @@ func (api ForgeApi) VerifyForgeVersion(forgeVersion forgeVersionApi.Version, min
 	return &ok, nil
 }
 
-func (api ForgeApi) GetFilteredReleasesForMinecraftVersion(minecraftVersionString string) forgeVersionApi.Versions {
+func (api *ForgeApi) getFilteredReleasesForMinecraftVersion(minecraftVersionString string) forgeVersionApi.Versions {
 	forgeMinecraftVersionFilter := &forgeVersionApi.Filter{
 		Minecraft: minecraftVersionString,
 	}
-	logger.Debug(forgeMinecraftVersionFilter)
+	logger.Debugf("Used version filter: %#v", forgeMinecraftVersionFilter)
 	forgeVersionList := api.forgeVersionList.Releases.Filter(forgeMinecraftVersionFilter)
 
 	return api.reverseSortVersionList(forgeVersionList)
 }
 
-func (api ForgeApi) GetSpecificForgeVersion(forgeVersionString string) forgeVersionApi.Versions {
+func (api *ForgeApi) getSpecificForgeVersion(forgeVersionString string) forgeVersionApi.Versions {
 	forgeMinecraftVersionFilter := &forgeVersionApi.Filter{
 		Version: forgeVersionString,
 	}
@@ -62,7 +66,7 @@ func (api ForgeApi) GetSpecificForgeVersion(forgeVersionString string) forgeVers
 	return api.reverseSortVersionList(forgeVersionList)
 }
 
-func (api ForgeApi) reverseSortVersionList(forgeVersionList forgeVersionApi.Versions) forgeVersionApi.Versions {
+func (api *ForgeApi) reverseSortVersionList(forgeVersionList forgeVersionApi.Versions) forgeVersionApi.Versions {
 	sort.Slice(forgeVersionList, func(i, j int) bool {
 		return forgeVersionList[i].ID > forgeVersionList[j].ID
 	})
@@ -70,31 +74,72 @@ func (api ForgeApi) reverseSortVersionList(forgeVersionList forgeVersionApi.Vers
 	return forgeVersionList
 }
 
-func (api ForgeApi) SelectForgeVersion(forgeVersionString string, minecraftVersionString string) (*forgeVersionApi.Version, *errors.ApplicationError) {
+func (api *ForgeApi) SelectForgeVersion(forgeVersionString string, minecraftVersionString string) (bool, *errors.ApplicationError) {
 	logger.Info("Choosing forge version")
 
 	if forgeVersionString == "" {
-		forgeVersionList := api.GetFilteredReleasesForMinecraftVersion(minecraftVersionString)
+		forgeVersionList := api.getFilteredReleasesForMinecraftVersion(minecraftVersionString)
 		selectedForgeVersion, err := RenderSelect(forgeVersionList)
 		if err != nil {
-			return nil, errors.NewError(err.Error())
+			return false, errors.NewError(err.Error())
 		}
 
-		return selectedForgeVersion, nil
+		api.SelectedForgeVersion = selectedForgeVersion
+
+		return true, nil
 	} else {
-		forgeVersionList := api.GetSpecificForgeVersion(forgeVersionString)
+		forgeVersionList := api.getSpecificForgeVersion(forgeVersionString)
 
 		if len(forgeVersionList) == 0 {
 			forgeError := errors.NewError(fmt.Sprintf("No forge package found for %s", forgeVersionString))
-			return nil, forgeError
+			return false, forgeError
 		}
-		_, err := api.VerifyForgeVersion(forgeVersionList[0], minecraftVersionString)
+		_, err := api.verifyForgeVersion(forgeVersionList[0], minecraftVersionString)
 
 		if err != nil {
-			return nil, errors.NewError(err.Error())
+			return false, errors.NewError(err.Error())
 		}
-		selectedForgeVersion := &forgeVersionList[0]
-		return selectedForgeVersion, nil
+		api.SelectedForgeVersion = &forgeVersionList[0]
+		return true, nil
 
 	}
+}
+
+func (api *ForgeApi) DownloadServer() (bool, *errors.ApplicationError) {
+	if api.SelectedForgeVersion == nil {
+		return false, errors.NewError("Forge version not selected.")
+	}
+	downloadFile := strings.Replace(api.SelectedForgeVersion.URL, "-universal", "-installer", -1)
+	logger.Infof("Download forge server for version %s", api.SelectedForgeVersion.Minecraft)
+	logger.Debugf("Used forge download file: %s", downloadFile)
+
+	workingDir, err := os.Getwd()
+	errors.CheckStandardErr(err)
+	utils.DownloadFile(downloadFile, "forge.jar", workingDir)
+	return true, nil
+}
+
+func (api *ForgeApi) InstallServer() (bool, *errors.ApplicationError) {
+	logger.Info("Installing forge version")
+	pwd, err := os.Getwd()
+	errors.CheckStandardErr(err)
+
+	forgerInstallerPath := fmt.Sprintf("%s/forge.jar", pwd)
+	_, err = os.Stat(forgerInstallerPath)
+
+	if os.IsNotExist(err) {
+		errors.CheckStandardErr(err)
+	}
+	logger.Debugf("Found forge.jar. Trying to install it now.")
+
+	cmd := exec.Command("java", "-jar", forgerInstallerPath, "--installServer")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	errors.CheckStandardErr(err)
+
+	err = os.Remove(forgerInstallerPath)
+	errors.CheckStandardErr(err)
+
+	return true, nil
 }

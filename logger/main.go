@@ -70,8 +70,21 @@ func Debug(args ...interface{}) {
 	}
 }
 
+func Debugf(format string, args ...interface{}) {
+	if viper.GetBool("no-tty") == false {
+		deb := color.New(color.FgHiBlack)
+		GetDefaultLogger().Debugf(deb.Sprint(format), args...)
+	} else {
+		GetDefaultLogger().Debugf(format, args...)
+	}
+}
+
 func Info(args ...interface{}) {
 	GetDefaultLogger().Info(args...)
+}
+
+func Infof(format string, args ...interface{}) {
+	GetDefaultLogger().Infof(format, args...)
 }
 
 func Success(args ...interface{}) {

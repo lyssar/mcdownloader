@@ -16,7 +16,7 @@ var papermcCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(papermcCmd)
+	setupCmd.AddCommand(papermcCmd)
 	papermcCmd.Flags().String("mcversion", "", "The minecraft version to use.")
 	papermcCmd.Flags().String("papermcVersion", "", "The papermc version you want to use.")
 }

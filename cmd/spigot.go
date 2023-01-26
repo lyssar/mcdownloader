@@ -16,7 +16,7 @@ var spigotCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(spigotCmd)
+	setupCmd.AddCommand(spigotCmd)
 	spigotCmd.Flags().String("mcversion", "", "The minecraft version to use.")
 	spigotCmd.Flags().String("spigotVersion", "", "The spigot version you want to use.")
 }

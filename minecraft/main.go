@@ -1,6 +1,7 @@
 package minecraft
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"github.com/lyssar/msdcli/errors"
@@ -10,7 +11,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"time"
 )
 
@@ -28,6 +28,9 @@ type Versions struct {
 	Latest   LatestVersion `json:"latest"`
 	Versions []Version     `json:"versions"`
 }
+
+//go:embed resources/eula.txt
+var defaultEula []byte
 
 func (v Versions) GetVersionsForType(releaseType string) []Version {
 	var filteredList []Version
@@ -224,7 +227,16 @@ func (r McRelease) InstallServer() {
 		errors.CheckStandardErr(err)
 	}
 
-	cmd := exec.Command("java", "-Xms2048M", "-Xmx2048M", "-jar", srvPath, "nogui")
-	err = cmd.Start()
-	errors.CheckStandardErr(err)
+	eulaFile := fmt.Sprintf("%s/eula.txt", pwd)
+	_, err = os.Stat(eulaFile)
+
+	if os.IsNotExist(err) {
+		// Create the file
+		f, err := os.Create(eulaFile)
+		defer f.Close()
+		errors.CheckStandardErr(err)
+		_, err = f.WriteString(string(defaultEula))
+		errors.CheckStandardErr(err)
+		logger.Success("Eula accepted")
+	}
 }

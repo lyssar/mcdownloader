@@ -21,7 +21,7 @@ var forgeCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(forgeCmd)
+	setupCmd.AddCommand(forgeCmd)
 
 	forgeCmd.PersistentFlags().StringP("minecraft-version", "m", "", "The minecraft version to use.")
 	forgeCmd.PersistentFlags().StringP("forge-version", "f", "", "The forge version you want to use.")

@@ -16,7 +16,7 @@ var fabricCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(fabricCmd)
+	setupCmd.AddCommand(fabricCmd)
 
 	fabricCmd.Flags().String("mcversion", "", "The minecraft version to use.")
 	fabricCmd.Flags().String("fabricVersion", "", "The fabric version you want to use.")

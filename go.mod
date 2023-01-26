@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
+	github.com/fatih/color v1.13.0
 	github.com/google/go-querystring v1.1.0
 	github.com/gookit/color v1.5.2
 	github.com/hashicorp/go-version v1.6.0
@@ -18,7 +19,6 @@ require (
 )
 
 require (
-	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect

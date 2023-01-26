@@ -7,6 +7,7 @@ import (
 	"github.com/lyssar/msdcli/errors"
 	"github.com/lyssar/msdcli/logger"
 	"github.com/lyssar/msdcli/minecraft"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -14,13 +15,16 @@ import (
 
 func CreateServer(config *config.Config) {
 	logger.Info("Start creating forge server.")
+	_, err := checkProjectDir()
+	errors.Check(err)
+
 	minecraftMetaApi := minecraft.NewMinecraftMetaApi(config.Minecraft.MetaJson)
 	selectedMinecraftVersion, err := minecraftMetaApi.FindMinecraftVersion(config.MinecraftVersion)
 	errors.Check(err)
 
 	forgeApp := NewForgeClient()
 
-	selectedForgeVersion, err := forgeApp.SelectForgeVersion(config.ForgeVersion, selectedMinecraftVersion.ID)
+	_, err = forgeApp.SelectForgeVersion(config.ForgeVersion, selectedMinecraftVersion.ID)
 	errors.Check(err)
 
 	mcRelease := selectedMinecraftVersion.DownloadRelease()
@@ -29,15 +33,33 @@ func CreateServer(config *config.Config) {
 
 	// Download server jar
 	if mcRelease.DownloadServer() {
+		logger.Debug("Start server to install once")
 		// Run and setup once
 		mcRelease.InstallServer()
 	}
 
-	logger.Debug("== FORGE ===============================================")
-	logger.Debug(selectedForgeVersion.URL)
-	logger.Debug(mcRelease.Downloads.Server.URL)
-	// Download forge
-	// Run and setup once
+	_, err = forgeApp.DownloadServer()
+	errors.Check(err)
+
+	_, err = forgeApp.InstallServer()
+	errors.Check(err)
+	logger.Success("Forge server successfully installed. Have fun playing.")
+}
+
+func checkProjectDir() (bool, *errors.ApplicationError) {
+	folder, err := os.Getwd()
+	errors.CheckStandardErr(err)
+
+	f, err := os.Open(folder)
+	errors.CheckStandardErr(err)
+
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+	if err == nil {
+		return false, errors.NewError("Folder is not empty. Can't create forger server.")
+	}
+	return true, nil
 }
 
 func checkJavaVersion(mcRelease minecraft.McRelease) (bool, *errors.ApplicationError) {

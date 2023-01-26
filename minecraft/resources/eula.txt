@@ -1,0 +1,3 @@
+# Automatically except the EULA of minecraft (https://aka.ms/MinecraftEULA).
+
+eula=true

@@ -16,6 +16,6 @@ var vanillaCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(vanillaCmd)
+	setupCmd.AddCommand(vanillaCmd)
 	vanillaCmd.Flags().String("mcversion", "", "The minecraft version to use.")
 }
