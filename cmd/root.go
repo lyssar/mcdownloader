@@ -41,7 +41,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Forcing the log level to debug")
+	rootCmd.PersistentFlags().StringP("working-dir", "w", "", "Folder to execute creation in")
 	_ = viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
+	_ = viper.BindPFlag("working-dir", rootCmd.PersistentFlags().Lookup("working-dir"))
 }
 
 func initConfig() {

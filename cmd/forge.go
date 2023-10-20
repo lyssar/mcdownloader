@@ -6,6 +6,7 @@ import (
 	"github.com/lyssar/msdcli/forge"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 )
 
 // forgeCmd represents the forge command
@@ -16,7 +17,12 @@ var forgeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// check args
 		config := config.GetConfig()
-		forge.CreateServer(config)
+		dir := viper.GetString("working-dir")
+		if dir == "" {
+			dir, _ = os.Getwd()
+		}
+
+		forge.CreateServer(dir, config)
 	},
 }
 

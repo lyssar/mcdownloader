@@ -105,7 +105,7 @@ func (api *ForgeApi) SelectForgeVersion(forgeVersionString string, minecraftVers
 	}
 }
 
-func (api *ForgeApi) DownloadServer() (bool, *errors.ApplicationError) {
+func (api *ForgeApi) DownloadServer(workingDir string) (bool, *errors.ApplicationError) {
 	if api.SelectedForgeVersion == nil {
 		return false, errors.NewError("Forge version not selected.")
 	}
@@ -113,19 +113,21 @@ func (api *ForgeApi) DownloadServer() (bool, *errors.ApplicationError) {
 	logger.Infof("Download forge server for version %s", api.SelectedForgeVersion.Minecraft)
 	logger.Debugf("Used forge download file: %s", downloadFile)
 
-	workingDir, err := os.Getwd()
-	errors.CheckStandardErr(err)
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		errors.CheckStandardErr(err)
+	}
 	utils.DownloadFile(downloadFile, "forge.jar", workingDir)
 	return true, nil
 }
 
-func (api *ForgeApi) InstallServer() (bool, *errors.ApplicationError) {
+func (api *ForgeApi) InstallServer(workingDir string) (bool, *errors.ApplicationError) {
 	logger.Info("Installing forge version")
-	pwd, err := os.Getwd()
-	errors.CheckStandardErr(err)
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		errors.CheckStandardErr(err)
+	}
 
-	forgerInstallerPath := fmt.Sprintf("%s/forge.jar", pwd)
-	_, err = os.Stat(forgerInstallerPath)
+	forgerInstallerPath := fmt.Sprintf("%s/forge.jar", workingDir)
+	_, err := os.Stat(forgerInstallerPath)
 
 	if os.IsNotExist(err) {
 		errors.CheckStandardErr(err)
@@ -133,6 +135,7 @@ func (api *ForgeApi) InstallServer() (bool, *errors.ApplicationError) {
 	logger.Debugf("Found forge.jar. Trying to install it now.")
 
 	cmd := exec.Command("java", "-jar", forgerInstallerPath, "--installServer")
+	cmd.Dir = workingDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

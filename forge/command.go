@@ -3,6 +3,7 @@ package forge
 import (
 	"fmt"
 	"github.com/hashicorp/go-version"
+	"github.com/kyokomi/emoji/v2"
 	"github.com/lyssar/msdcli/config"
 	"github.com/lyssar/msdcli/errors"
 	"github.com/lyssar/msdcli/logger"
@@ -13,9 +14,10 @@ import (
 	"strconv"
 )
 
-func CreateServer(config *config.Config) {
-	logger.Info("Start creating forge server.")
-	_, err := checkProjectDir()
+func CreateServer(workingDir string, config *config.Config) {
+	_, _ = emoji.Println(":compass:")
+	logger.Infof("%s Start creating forge server.", emoji.Emojize(":genie:"))
+	_, err := checkProjectDir(workingDir)
 	errors.Check(err)
 
 	minecraftMetaApi := minecraft.NewMinecraftMetaApi(config.Minecraft.MetaJson)
@@ -32,23 +34,27 @@ func CreateServer(config *config.Config) {
 	errors.Check(err)
 
 	// Download server jar
-	if mcRelease.DownloadServer() {
+	if mcRelease.DownloadServer(workingDir) {
 		logger.Debug("Start server to install once")
 		// Run and setup once
-		mcRelease.InstallServer()
+		mcRelease.InstallServer(workingDir)
 	}
 
-	_, err = forgeApp.DownloadServer()
+	_, err = forgeApp.DownloadServer(workingDir)
 	errors.Check(err)
 
-	_, err = forgeApp.InstallServer()
+	_, err = forgeApp.InstallServer(workingDir)
 	errors.Check(err)
-	logger.Success("Forge server successfully installed. Have fun playing.")
+
+	logger.Infof("%s Forge server successfully installed. Have fun playing.", emoji.Sprint(":partying_face:"))
+	logger.Infof("To run your instance execute %[1]s/run.sh nogui or %[1]s/run.bat nogui.", workingDir)
 }
 
-func checkProjectDir() (bool, *errors.ApplicationError) {
-	folder, err := os.Getwd()
-	errors.CheckStandardErr(err)
+func checkProjectDir(folder string) (bool, *errors.ApplicationError) {
+	err := os.MkdirAll(folder, 0755)
+	if err != nil {
+		return false, errors.NewError("Couldn't create directory.")
+	}
 
 	f, err := os.Open(folder)
 	errors.CheckStandardErr(err)
@@ -57,7 +63,7 @@ func checkProjectDir() (bool, *errors.ApplicationError) {
 
 	_, err = f.Readdirnames(1)
 	if err == nil {
-		return false, errors.NewError("Folder is not empty. Can't create forger server.")
+		return false, errors.NewError("Folder is not empty. Can't create forge server.")
 	}
 	return true, nil
 }

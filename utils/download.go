@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/gookit/color"
+	"github.com/kyokomi/emoji/v2"
 	"github.com/lyssar/msdcli/logger"
 	"github.com/schollz/progressbar/v3"
 	"io"
@@ -21,7 +22,7 @@ func DownloadFile(url string, outputName string, path string) {
 
 	bar := progressbar.DefaultBytes(
 		resp.ContentLength,
-		color.LightCyan.Render("Downloading"),
+		color.LightCyan.Render(emoji.Emojize(":compass:"), "Downloading"),
 	)
 	io.Copy(io.MultiWriter(f, bar), resp.Body)
 

@@ -209,25 +209,27 @@ func (versionMeta Version) DownloadRelease() McRelease {
 	return mcRelease
 }
 
-func (r McRelease) DownloadServer() bool {
-	workingDir, err := os.Getwd()
-	errors.CheckStandardErr(err)
+func (r McRelease) DownloadServer(workingDir string) bool {
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		errors.CheckStandardErr(err)
+	}
 	utils.DownloadFile(r.Downloads.Server.URL, "server.jar", workingDir)
 	return true
 }
 
-func (r McRelease) InstallServer() {
-	pwd, err := os.Getwd()
-	errors.CheckStandardErr(err)
+func (r McRelease) InstallServer(workingDir string) {
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		errors.CheckStandardErr(err)
+	}
 
-	srvPath := fmt.Sprintf("%s/server.jar", pwd)
-	_, err = os.Stat(srvPath)
+	srvPath := fmt.Sprintf("%s/server.jar", workingDir)
+	_, err := os.Stat(srvPath)
 
 	if os.IsNotExist(err) {
 		errors.CheckStandardErr(err)
 	}
 
-	eulaFile := fmt.Sprintf("%s/eula.txt", pwd)
+	eulaFile := fmt.Sprintf("%s/eula.txt", workingDir)
 	_, err = os.Stat(eulaFile)
 
 	if os.IsNotExist(err) {
